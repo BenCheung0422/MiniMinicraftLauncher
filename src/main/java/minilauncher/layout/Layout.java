@@ -11,8 +11,8 @@ public class Layout extends JFrame {
     }
     public static class Properties {
         public String name = "MiniLauncher";
-        public int width = 500;
-        public int height = 300;
+        public int width = 1000;
+        public int height = 600;
         public JMenuBar menuBar = null;
     }
 }

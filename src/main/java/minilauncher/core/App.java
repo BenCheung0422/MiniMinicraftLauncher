@@ -5,8 +5,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.io.IOException;
 import java.awt.BorderLayout;
+import java.awt.Color;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -14,6 +14,7 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 
+import minilauncher.handler.Packages;
 import minilauncher.layout.Layout;
 import minilauncher.layout.mainLayout.Loading;
 import minilauncher.layout.mainLayout.MainPage;
@@ -40,10 +41,11 @@ public class App {
             JMenuItem exit = new JMenuItem("Exit");
             exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK));
             exit.addActionListener(e -> {
-                exit();
+                mainLayout.dispatchEvent(new WindowEvent(mainLayout, WindowEvent.WINDOW_CLOSING));;
             });
             menu.add(exit);
             menuBar.add(menu);
+            menuBar.setBackground(Color.GRAY);
             mainLayout.setJMenuBar(menuBar);
         }
         mainLayout.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -83,6 +85,8 @@ public class App {
             File testFile = new File(dataDir);
             testFile.mkdirs();
         }
+        FileHandler.makeDirs();
+        Packages.init();
         MainPage.loadLayout(mainLayout);
         layout = mainLayout;
         Runner.run();
