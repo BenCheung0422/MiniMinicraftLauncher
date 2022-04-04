@@ -1,0 +1,64 @@
+[
+    {
+        "name": "Minicraft+",
+        "installs": [
+            {
+                "version": "2.0.7",
+                "gameURL": "https://github.com/MinicraftPlus/minicraft-plus-revived/releases/download/v2.0.7/minicraft_plus-2.0.7.jar"
+            },
+            {
+                "version": "2.0.6",
+                "gameURL": "https://github.com/MinicraftPlus/minicraft-plus-revived/releases/download/v2.0.6/minicraft_plus_2.0.6_official.jar"
+            },
+            {
+                "version": "2.0.5",
+                "gameURL": "https://github.com/MinicraftPlus/minicraft-plus-revived/releases/download/v2.0.5/minicraft_plus_2.0.5_official.jar"
+            },
+            {
+                "version": "2.0.4",
+                "gameURL": "https://github.com/MinicraftPlus/minicraft-plus-revived/releases/download/v2.0.4/minicraft_plus_2.0.4_official.jar"
+            },
+            {
+                "version": "2.0.3",
+                "gameURL": "https://github.com/MinicraftPlus/minicraft-plus-revived/releases/download/v2.0.3/minicraft_plus_2.0.3_official.jar"
+            },
+            {
+                "version": "2.0.2",
+                "gameURL": "https://github.com/MinicraftPlus/minicraft-plus-revived/releases/download/v2.0.2/minicraft_plus_2.0.2_official.jar"
+            },
+            {
+                "version": "2.0.1",
+                "gameURL": "https://github.com/MinicraftPlus/minicraft-plus-revived/releases/download/v2.0.1/minicraft_plus_2.0.1_official.jar"
+            },
+            {
+                "version": "2.0.0",
+                "gameURL": "https://github.com/MinicraftPlus/minicraft-plus-revived/releases/download/v2.0.0/minicraft_plus_2.0.0_official.jar"
+            }
+        ]
+    },
+    {
+        "name": "Aircraft",
+        "installs": [
+            {
+                "version": "0.4",
+                "gameURL": "https://github.com/TheBigEye/Aircraft/releases/download/v0.0.4/Aircraft.jar"
+            },
+            {
+                "version": "0.4-pre",
+                "gameURL": "https://github.com/TheBigEye/Aircraft/releases/download/v0.0.4-pre/Aircraft.jar"
+            },
+            {
+                "version": "0.3",
+                "gameURL": "https://github.com/TheBigEye/Aircraft/releases/download/v0.03/Aircraft.jar"
+            },
+            {
+                "version": "0.2",
+                "gameURL": "https://github.com/TheBigEye/Aircraft/releases/download/v0.02/Aircraft.jar"
+            },
+            {
+                "version": "0.1",
+                "gameURL": "https://github.com/TheBigEye/Aircraft/releases/download/v0.01/Aircraft.jar"
+            }
+        ]
+    }
+]

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import minilauncher.core.App;
@@ -27,5 +28,25 @@ public class Load {
             }
         }
         Installation.installations = installations;
+        loadInstallables();
+    }
+    public static void loadInstallables() {
+        if (new File(App.dataDir+"/installables.json").exists()) {
+            JSONArray installables = new JSONArray();
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(App.dataDir+"/installables.json"));
+                String out = "";
+                String line;
+                while ((line = reader.readLine())!=null) out += line;
+                reader.close();
+                installables = new JSONArray(out);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Installation.installables = installables;
+        } else {
+            Save.saveInstallables(true);
+            loadInstallables();
+        }
     }
 }

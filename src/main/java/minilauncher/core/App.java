@@ -27,6 +27,7 @@ public class App {
 	static String OS;
 	private static String localAppDir;
 	static String systemAppDir;
+    private static Layout MainAppLayout;
 
     public static void exit() {
         running = false;
@@ -34,6 +35,7 @@ public class App {
     public static void main(String[] args) {
         resolveArgs(args);
         Layout mainLayout = new Layout(new Layout.Properties());
+        MainAppLayout = mainLayout;
         {
             JMenuBar menuBar = new JMenuBar();
             JMenu menu = new JMenu("Options");
@@ -92,6 +94,9 @@ public class App {
         Runner.run();
         Log.debug("Application exits.");
         System.exit(0);
+    }
+    public static void refreshLayout() {
+        MainAppLayout.validate();
     }
     private static void resolveArgs(String[] args) {
         for (String arg : args) {

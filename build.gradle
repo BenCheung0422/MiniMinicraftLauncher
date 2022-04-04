@@ -29,18 +29,10 @@ dependencies {
     // implementation 'org.tinylog:tinylog-api:2.4.1'
     // implementation 'org.tinylog:tinylog-impl:2.4.1'
     // implementation 'com.github.TheNullicorn:Nedit:2.1.0'
+    implementation 'commons-io:commons-io:2.4'
 }
 
-// buildscript {
-//     repositories {
-//         gradlePluginPortal()
-//     }
-//     dependencies {
-//         classpath 'gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0'
-//     }
-// }
-
-jar {
+shadowJar {
     archivesBaseName = 'MiniLauncher'
     archiveClassifier.set('')
     
@@ -48,6 +40,7 @@ jar {
         attributes('Main-Class': mainClassName,
                 'Implementation-Title': project.name,
                 'Implementation-Version': project.version,
-                'SplashScreen-Image': "Minicraft_Splash_Screen_3.png")
+                // 'SplashScreen-Image': "Minicraft_Splash_Screen_3.png"
+                )
     }
 }
