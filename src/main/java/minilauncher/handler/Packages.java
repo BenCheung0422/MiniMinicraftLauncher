@@ -49,6 +49,26 @@ public class Packages {
         App.refreshLayout();
         Save.savePackageList();
     }
+    public static installPackage getCurrentLatest(String name) {
+        installPackage latest = new installPackage();
+        latest.version = new Version("0");
+        for (installPackage pack : packages) {
+            if (pack.name == name) {
+                if (latest.version.compareTo(pack.version)<0) latest = pack;
+            }
+        }
+        if (latest.version.compareTo(new Version("0"))==0) return null;
+        return latest;
+    }
+    public static Version getCurrentLatestVersion(String name) {
+        Version latest = new Version("0");
+        for (installPackage pack : packages) {
+            if (pack.name == name) {
+                if (latest.compareTo(pack.version)<0) latest = pack.version;
+            }
+        }
+        return latest;
+    }
     public static class installPackage {
         public String name;
         public Version version;

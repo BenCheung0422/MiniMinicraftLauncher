@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import minilauncher.core.App;
 import minilauncher.core.Log;
+import minilauncher.handler.AutoCheckUpdate;
 import minilauncher.handler.Packages;
 
 public class Save {
@@ -47,6 +48,27 @@ public class Save {
             }
         } else {
 
+        }
+    }
+    public static void saveSettings() {
+        JSONObject settings = new JSONObject();
+        if (AutoCheckUpdate.updatersCount() != 0) {
+            JSONArray updatersOp = new JSONArray();
+            for (AutoCheckUpdate update : AutoCheckUpdate.getUpdaters()) {
+                JSONObject options = new JSONObject();
+                options.put("name", update.getName());
+                options.put("update", update.getAutoUpdate());
+                updatersOp.put(options);
+            }
+            settings.put("AutoCheckUpdate", updatersOp);
+        }
+        try {
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(App.dataDir+"/settings.json"));
+            bufferedWriter.write(settings.toString(4));
+            bufferedWriter.close();
+            Log.debug("Saved settings.json.");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

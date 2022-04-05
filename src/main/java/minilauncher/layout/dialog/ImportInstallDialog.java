@@ -19,6 +19,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.Frame;
 import java.awt.BorderLayout;
+import java.awt.Component;
 
 import minilauncher.core.App;
 import minilauncher.layout.componentlayout.FileChoosingCom;
@@ -35,6 +36,7 @@ public class ImportInstallDialog extends DialogLayout {
         super(frame, modal, new Properties());
         setTitle("Import Installation");
         separateGameDataCheck.setSelected(true);
+        separateGameDataCheck.setAlignmentX(Component.LEFT_ALIGNMENT);
         JPanel fileChoose1 = new JPanel();
         fileChoose1.add(new JLabel("Game File (.jar): "));
         fileChoosedField1 = fileChoosingCom1.addFileTextField(App.dataDir);
@@ -42,12 +44,14 @@ public class ImportInstallDialog extends DialogLayout {
         fileChoosingCom1.getFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);;
         fileChoosingCom1.getFileChooser().setFileFilter(new FileNameExtensionFilter("JAR File", "jar"));
         fileChoose1.add(fileChoosingCom1);
+        fileChoose1.setAlignmentX(Component.LEFT_ALIGNMENT);
         JPanel fileChoose2 = new JPanel();
         fileChoose2.add(new JLabel("Game Data Folder: "));
         fileChoosedField2 = fileChoosingCom2.addFileTextField(App.dataDir);
         fileChoosedField2.setToolTipText("Enter \"DEFAULT\" if use default data path.");
         fileChoosingCom2.addFileButton();
         fileChoose2.add(fileChoosingCom2);
+        fileChoose2.setAlignmentX(Component.LEFT_ALIGNMENT);
         fileChoosedField1.setColumns(30);
         fileChoosedField2.setColumns(30);
         fileChoosedField1.getDocument().addDocumentListener(new DocumentListener() {
@@ -62,13 +66,16 @@ public class ImportInstallDialog extends DialogLayout {
         extraInputPanel1.add(new JLabel("Game Name: "));
         extraInput1.setColumns(12);
         extraInputPanel1.add(extraInput1);
+        extraInputPanel1.setAlignmentX(Component.LEFT_ALIGNMENT);
         JPanel extraInputPanel2 = new JPanel();
         extraInputPanel2.add(new JLabel("Game Version: "));
         extraInput2.setColumns(8);
         extraInputPanel2.add(extraInput2);
+        extraInputPanel2.setAlignmentX(Component.LEFT_ALIGNMENT);
         extraInfoPanel.setLayout(new BoxLayout(extraInfoPanel, BoxLayout.Y_AXIS));
         extraInfoPanel.add(extraInputPanel1);
         extraInfoPanel.add(extraInputPanel2);
+        extraInfoPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         JPanel buttonPanel = new JPanel();
         JButton importButton = new JButton("Import");
         importButton.addActionListener(e -> {

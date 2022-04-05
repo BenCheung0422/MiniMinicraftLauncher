@@ -6,9 +6,11 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import minilauncher.core.App;
+import minilauncher.core.Settings;
 import minilauncher.handler.Installation;
 
 public class Load {
@@ -16,12 +18,7 @@ public class Load {
         JSONObject installations = new JSONObject();
         if (new File(App.dataDir+"/installations.json").exists()) {
             try {
-                BufferedReader reader = new BufferedReader(new FileReader(App.dataDir+"/installations.json"));
-                String out = "";
-                String line;
-                while ((line = reader.readLine())!=null) out += line;
-                reader.close();
-                installations = new JSONObject(out);
+                installations = new JSONObject(loadFile(App.dataDir+"/installations.json"));
                 if (!installations.has("installations")) throw new IOException();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -34,12 +31,7 @@ public class Load {
         if (new File(App.dataDir+"/installables.json").exists()) {
             JSONArray installables = new JSONArray();
             try {
-                BufferedReader reader = new BufferedReader(new FileReader(App.dataDir+"/installables.json"));
-                String out = "";
-                String line;
-                while ((line = reader.readLine())!=null) out += line;
-                reader.close();
-                installables = new JSONArray(out);
+                installables = new JSONArray(loadFile(App.dataDir+"/installables.json"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -48,5 +40,24 @@ public class Load {
             Save.saveInstallables(true);
             loadInstallables();
         }
+    }
+    public static void loadSettings() {
+        JSONObject settings = new JSONObject();
+        if (new File(App.dataDir+"/settings.json").exists()) {
+            try {
+                settings = new JSONObject(loadFile(App.dataDir+"/settings.json"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        Settings.loadSettings(settings);
+    }
+    public static String loadFile(String filename) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(filename));
+        String out = "";
+        String line;
+        while ((line = reader.readLine())!=null) out += line;
+        reader.close();
+        return out;
     }
 }

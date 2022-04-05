@@ -11,20 +11,29 @@ import java.nio.file.Paths;
 
 import org.json.JSONArray;
 
-/**
- * UNUSED
- */
+import minilauncher.handler.Packages;
+
+
 public class Network extends App {
     public static void downloadFile(URL url, String fileName) throws IOException {
         try (InputStream in = url.openStream()) {
             Files.copy(in, Paths.get(fileName));
         }
     }
-	public static void findVersions(Runnable callback) {
+
+    private static VersionInfo latestVersion = null;
+	
+	// Obviously, this can be null.
+	public static VersionInfo getLatestVersion() { return latestVersion; }
+	
+	
+    public static void findLatestVersion(String name, Runnable callback) {
 		new Thread(() -> {
 			Log.debug("Fetching release list from GitHub..."); // Fetch the latest version from GitHub
 			try {
-                HttpURLConnection con = (HttpURLConnection) new URL("https://api.github.com/repos/chrisj42/minicraft-plus-revived/releases").openConnection();
+                HttpURLConnection con = (HttpURLConnection) new URL(name.equals("Minicraft+")? "https://api.github.com/repos/chrisj42/minicraft-plus-revived/releases"
+                    : name.equals("Aircraft")? "https://api.github.com/repos/TheBigEye/Aircraft/releases"
+                    : "https://api.github.com/repos/pelletsstarPL/Minicraft-squared/releases").openConnection();
 				con.setRequestMethod("GET");
                 if (con.getResponseCode() != 200) {
 					Log.debug("Version request returned status code " + con.getResponseCode() + ": " + con.getResponseMessage());
@@ -36,7 +45,8 @@ public class Network extends App {
                     }
                     in.close();
                     Log.debug("Response body: " + content.toString());
-				} else {
+                    latestVersion = new VersionInfo(Packages.getCurrentLatest(name).version, "", "", "");
+                } else {
                     BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                     String inputLine;
                     String content = "";
@@ -44,11 +54,12 @@ public class Network extends App {
                         content += inputLine;
                     }
                     in.close();
-                    new JSONArray(content);
-				}
+                    latestVersion = new VersionInfo(new JSONArray(content).getJSONObject(0));
+                }
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
+                latestVersion = new VersionInfo(Packages.getCurrentLatest(name).version, "", "", "");
+            }
 			
 			callback.run(); // finished.
 		}).start();

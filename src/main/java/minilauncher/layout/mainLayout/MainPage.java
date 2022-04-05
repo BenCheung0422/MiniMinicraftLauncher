@@ -30,11 +30,13 @@ import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 import minilauncher.core.Log;
+import minilauncher.handler.AutoCheckUpdate;
 import minilauncher.handler.Installation;
 import minilauncher.handler.Launcher;
 import minilauncher.handler.Packages;
 import minilauncher.layout.Layout;
 import minilauncher.layout.dialog.AddInstallDialog;
+import minilauncher.layout.dialog.AutoCheckOptionDialog;
 import minilauncher.layout.dialog.ImportInstallDialog;
 
 public class MainPage {
@@ -45,6 +47,8 @@ public class MainPage {
         public static JPanel detailsPanel;
         public static JPanel infoPanel;
     }
+    public static JMenu autoUpdater = new JMenu("Auto Updater");
+    public static JMenuItem checkUpdatesManual = new JMenuItem("Check Updates");
     public static void loadLayout(Layout layout) {
         JLabel label = new JLabel("MiniLauncher");
         label.setFont(new Font("Serif", Font.BOLD, 40));
@@ -131,9 +135,22 @@ public class MainPage {
         layout.getContentPane().add(panel);
         layout.getContentPane().setBackground(new Color(10, 10, 10));
         JMenuBar menuBar = layout.getJMenuBar();
+        JMenu optionsMenu = menuBar.getMenu(0);
+        JMenuItem updateOptionsMenu = new JMenuItem("Auto Check Updater Options");
+        updateOptionsMenu.addActionListener(e -> {
+            new AutoCheckOptionDialog(layout, true).showDialog();
+        });
+        updateOptionsMenu.setMnemonic(KeyEvent.VK_U);
+        optionsMenu.add(updateOptionsMenu, 0);
+        autoUpdater.setMnemonic(KeyEvent.VK_A);
+        checkUpdatesManual.addActionListener(e -> {
+            AutoCheckUpdate.checkUpdates();
+        });
+        autoUpdater.add(checkUpdatesManual);
+        menuBar.add(autoUpdater);
         JMenu installMenu = new JMenu("Installations");
         JMenuItem importInstallMenu = new JMenuItem("Import installation");
-        importInstallMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));
+        importInstallMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.ALT_MASK));
         importInstallMenu.addActionListener(e -> {
             ImportInstallDialog.Results result = new ImportInstallDialog(layout, true).showDialog();
             if (result != null) {
@@ -142,7 +159,7 @@ public class MainPage {
         });
         importInstallMenu.setMnemonic(KeyEvent.VK_I);
         JMenuItem addInstallMenu = new JMenuItem("Add installation");
-        addInstallMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.ALT_MASK));
+        addInstallMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));
         addInstallMenu.addActionListener(e -> {
             Packages.installablePackage result = new AddInstallDialog(layout, true).showDialog();
             if (result != null) {
@@ -157,6 +174,7 @@ public class MainPage {
         menuBar.add(Box.createHorizontalGlue());
         menuBar.add(installMenu);
         layout.validate();
+        if (AutoCheckUpdate.updatersCount()!=0) AutoCheckUpdate.checkUpdates();
     }
     private static void setPackageDetail(int index) {
         Packages.installPackage pack = Packages.packages.get(index);
