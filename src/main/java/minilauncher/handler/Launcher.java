@@ -3,14 +3,11 @@ package minilauncher.handler;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import javax.swing.JButton;
 
 import java.awt.Color;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 import minilauncher.core.Log;
 import minilauncher.layout.LaunchConsole;
