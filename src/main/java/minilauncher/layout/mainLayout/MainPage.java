@@ -29,26 +29,32 @@ import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
-import minilauncher.core.Log;
 import minilauncher.handler.AutoCheckUpdate;
 import minilauncher.handler.Installation;
-import minilauncher.handler.Launcher;
 import minilauncher.handler.Packages;
 import minilauncher.layout.Layout;
 import minilauncher.layout.dialog.AddInstallDialog;
 import minilauncher.layout.dialog.AutoCheckOptionDialog;
 import minilauncher.layout.dialog.ImportInstallDialog;
+import minilauncher.layout.dialog.LaunchOptionsDialog;
 
 public class MainPage {
-    private static class packageDetails {
+    private static class packageCurrDetails {
         public static JLabel name;
         public static JLabel version;
         public static JButton button = new JButton("Launch");
         public static JPanel detailsPanel;
         public static JPanel infoPanel;
+        public static JPanel infoDetailPanel;
+        public static JButton launchOptionsButton = new JButton("Options");
+        public static JPanel launchOptionsSPanel = new JPanel();
+        public static JLabel launchOptions1 = new JLabel();
+        public static JLabel launchOptions2 = new JLabel();
     }
+    private static JList<String> leftListBar;
     public static JMenu autoUpdater = new JMenu("Auto Updater");
     public static JMenuItem checkUpdatesManual = new JMenuItem("Check Updates");
+    private static Layout appLayout;
     public static void loadLayout(Layout layout) {
         JLabel label = new JLabel("MiniLauncher");
         label.setFont(new Font("Serif", Font.BOLD, 40));
@@ -68,7 +74,7 @@ public class MainPage {
             public String getElementAt(int index) { return Packages.packages.get(index).toString(); }
         });
         list.addListSelectionListener(e -> {
-            setPackageDetail(list.getSelectedIndex());
+            setCurrPackageDetail(list.getSelectedIndex());
         });
         list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
@@ -78,30 +84,55 @@ public class MainPage {
         list.setFixedCellWidth(300);
         list.setSelectionForeground(new Color(180, 180, 180));
         list.setSelectionBackground(new Color(35, 35, 35));
-        JPanel infoPan = new JPanel();
-        infoPan.setLayout(new BoxLayout(infoPan, BoxLayout.Y_AXIS));
+        leftListBar = list;
+        JPanel infoTitlePan = new JPanel();
+        infoTitlePan.setLayout(new BoxLayout(infoTitlePan, BoxLayout.Y_AXIS));
         JPanel pack = new JPanel();
         pack.setLayout(new BorderLayout());
-        packageDetails.name = new JLabel();
-        packageDetails.name.setFont(new Font("Serif", Font.PLAIN, 25));
-        packageDetails.name.setForeground(Color.WHITE);
-        packageDetails.name.setAlignmentX(Component.CENTER_ALIGNMENT);
-        packageDetails.name.setHorizontalAlignment(SwingConstants.CENTER);
-        packageDetails.name.setVerticalAlignment(SwingConstants.CENTER);
-        infoPan.add(packageDetails.name);
-        packageDetails.version = new JLabel();
-        packageDetails.version.setFont(new Font("Serif", Font.PLAIN, 18));
-        packageDetails.version.setForeground(Color.WHITE);
-        packageDetails.version.setAlignmentX(Component.CENTER_ALIGNMENT);
-        packageDetails.version.setHorizontalAlignment(SwingConstants.CENTER);
-        packageDetails.version.setVerticalAlignment(SwingConstants.CENTER);
-        infoPan.add(packageDetails.version);
+        packageCurrDetails.name = new JLabel();
+        packageCurrDetails.name.setFont(new Font("Serif", Font.PLAIN, 25));
+        packageCurrDetails.name.setForeground(Color.WHITE);
+        packageCurrDetails.name.setAlignmentX(Component.CENTER_ALIGNMENT);
+        packageCurrDetails.name.setHorizontalAlignment(SwingConstants.CENTER);
+        packageCurrDetails.name.setVerticalAlignment(SwingConstants.CENTER);
+        infoTitlePan.add(packageCurrDetails.name);
+        packageCurrDetails.version = new JLabel();
+        packageCurrDetails.version.setFont(new Font("Serif", Font.PLAIN, 18));
+        packageCurrDetails.version.setForeground(Color.WHITE);
+        packageCurrDetails.version.setAlignmentX(Component.CENTER_ALIGNMENT);
+        packageCurrDetails.version.setHorizontalAlignment(SwingConstants.CENTER);
+        packageCurrDetails.version.setVerticalAlignment(SwingConstants.CENTER);
+        packageCurrDetails.launchOptionsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        packageCurrDetails.launchOptionsSPanel.setLayout(new BoxLayout(packageCurrDetails.launchOptionsSPanel, BoxLayout.Y_AXIS));
+        packageCurrDetails.launchOptions1.setAlignmentX(Component.CENTER_ALIGNMENT);
+        packageCurrDetails.launchOptions2.setAlignmentX(Component.CENTER_ALIGNMENT);
+        packageCurrDetails.launchOptions1.setForeground(Color.WHITE);
+        packageCurrDetails.launchOptions2.setForeground(Color.WHITE);
+        packageCurrDetails.launchOptions1.setFont(new Font("Serif", Font.PLAIN, 20));
+        packageCurrDetails.launchOptions2.setFont(new Font("Serif", Font.PLAIN, 20));
+        packageCurrDetails.launchOptionsSPanel.add(packageCurrDetails.launchOptions1);
+        packageCurrDetails.launchOptionsSPanel.add(packageCurrDetails.launchOptions2);
+        packageCurrDetails.launchOptionsSPanel.setBackground(new Color(16, 16, 16));
+        infoTitlePan.add(packageCurrDetails.version);
+        infoTitlePan.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JPanel infoPan = new JPanel();
+        infoPan.setLayout(new BoxLayout(infoPan, BoxLayout.Y_AXIS));
+        infoPan.add(infoTitlePan);
+        JPanel infoEmptySubPan = new JPanel();
+        infoEmptySubPan.setSize(0, 60);
+        infoEmptySubPan.setBackground(new Color(16, 16, 16));
+        infoPan.add(infoEmptySubPan);
+        JPanel infoDetailPan = new JPanel();
+        infoDetailPan.setLayout(new BoxLayout(infoDetailPan, BoxLayout.Y_AXIS));
+        infoDetailPan.setBackground(new Color(16, 16, 16));
+        infoPan.add(infoDetailPan);
+        packageCurrDetails.infoDetailPanel = infoDetailPan;
+        infoPan.setBackground(new Color(16, 16, 16));
+        packageCurrDetails.infoPanel = infoPan;
         pack.add(infoPan, BorderLayout.PAGE_START);
         pack.setBackground(new Color(16, 16, 16));
-        infoPan.setBackground(new Color(16, 16, 16));
-        packageDetails.button.setForeground(Color.BLACK);
-        packageDetails.button.setBackground(Color.GREEN);
-        packageDetails.detailsPanel = pack;
+        infoTitlePan.setBackground(new Color(16, 16, 16));
+        packageCurrDetails.detailsPanel = pack;
         JSplitPane subPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, list, pack);
         subPanel.setDividerLocation(300);
         subPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -174,18 +205,33 @@ public class MainPage {
         menuBar.add(Box.createHorizontalGlue());
         menuBar.add(installMenu);
         layout.validate();
+        appLayout = layout;
         if (AutoCheckUpdate.updatersCount()!=0) AutoCheckUpdate.checkUpdates();
     }
-    private static void setPackageDetail(int index) {
+    public static void validateLeftListBar() {
+        leftListBar.repaint();
+    }
+    private static void setCurrPackageDetail(int index) {
         Packages.installPackage pack = Packages.packages.get(index);
-        packageDetails.name.setText(pack.name);
-        packageDetails.version.setText(pack.version.toString());
-        packageDetails.detailsPanel.remove(packageDetails.button);
-        for (ActionListener al : packageDetails.button.getActionListeners()) packageDetails.button.removeActionListener(al);
-        packageDetails.button.addActionListener(e -> {
-            Log.debug("Launching game...");
-            Launcher.launchGame(pack, packageDetails.button);
+        packageCurrDetails.name.setText(pack.name);
+        packageCurrDetails.version.setText(pack.version.toString());
+        packageCurrDetails.detailsPanel.remove(packageCurrDetails.button);
+        packageCurrDetails.button = pack.launchingDetails.launchButton;
+        for (ActionListener al : packageCurrDetails.launchOptionsButton.getActionListeners()) packageCurrDetails.launchOptionsButton.removeActionListener(al);
+        packageCurrDetails.launchOptionsButton.addActionListener(e -> {
+            LaunchOptionsDialog.Results results = new LaunchOptionsDialog(appLayout, true).showDialog();
+            if (results != null) {
+                pack.launchingDetails.isDebug = results.isDebug;
+                pack.launchingDetails.isConsole = results.isConsole;
+                packageCurrDetails.launchOptions1.setText("Is in debug mode: "+(pack.launchingDetails.isDebug? "Yes": "No"));
+                packageCurrDetails.launchOptions2.setText("Show console: "+(pack.launchingDetails.isConsole? "Yes": "No"));
+            }
         });
-        packageDetails.detailsPanel.add(packageDetails.button, BorderLayout.PAGE_END);
+        packageCurrDetails.launchOptions1.setText("Is in debug mode: "+(pack.launchingDetails.isDebug? "Yes": "No"));
+        packageCurrDetails.launchOptions2.setText("Show console: "+(pack.launchingDetails.isConsole? "Yes": "No"));
+        packageCurrDetails.infoDetailPanel.add(packageCurrDetails.launchOptionsButton);
+        packageCurrDetails.infoDetailPanel.add(packageCurrDetails.launchOptionsSPanel);
+        packageCurrDetails.detailsPanel.add(packageCurrDetails.button, BorderLayout.PAGE_END);
+        packageCurrDetails.detailsPanel.repaint();
     }
 }

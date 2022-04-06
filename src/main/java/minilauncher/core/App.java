@@ -14,6 +14,7 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 
+import minilauncher.handler.Launcher;
 import minilauncher.handler.Packages;
 import minilauncher.layout.Layout;
 import minilauncher.layout.mainLayout.Loading;
@@ -24,13 +25,14 @@ public class App {
     public static boolean running = true;
     public static String dataDir;
     public static Layout layout;
-	static String OS;
+	public static String OS;
 	private static String localAppDir;
 	static String systemAppDir;
     private static Layout MainAppLayout;
 
     public static void exit() {
         running = false;
+        Launcher.removeAllLaunching();
     }
     public static void main(String[] args) {
         resolveArgs(args);

@@ -1,5 +1,8 @@
 package minilauncher.saveload;
 
+/**
+ * From Minicraft+ (minicraft.saveload.Version)
+ */
 public class Version implements Comparable<Version> {
 	private int make, major, minor, dev;
 	private boolean valid = true;

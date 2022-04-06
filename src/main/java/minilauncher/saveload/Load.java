@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import minilauncher.core.App;

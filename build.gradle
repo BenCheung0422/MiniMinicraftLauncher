@@ -1,11 +1,11 @@
 plugins {
     id 'java'
     id 'application'
-    id 'maven-publish'
+    // id 'maven-publish'
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
-project.version = '0.2.0'
+project.version = '0.3.0'
 archivesBaseName = "MiniLauncher"
 
 sourceCompatibility = 8

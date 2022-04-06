@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import minilauncher.core.App;
+import minilauncher.layout.mainLayout.MainPage;
 import minilauncher.saveload.Save;
 import minilauncher.saveload.Version;
 
@@ -22,6 +22,7 @@ public class Packages {
             pack.version = new Version(install.getString("version"));
             pack.gameDir = install.getString("gameDir");
             pack.saveDir = install.getString("saveDir");
+            pack.launchingDetails = LaunchingDetails.getDefaultDetails(pack);
             packages.add(pack);
         }
         JSONArray installables = Installation.installables;
@@ -45,8 +46,9 @@ public class Packages {
         pack.version = ver;
         pack.gameDir = gameDir;
         pack.saveDir = saveDir;
+        pack.launchingDetails = LaunchingDetails.getDefaultDetails(pack);
         packages.add(pack);
-        App.refreshLayout();
+        MainPage.validateLeftListBar();
         Save.savePackageList();
     }
     public static installPackage getCurrentLatest(String name) {
@@ -74,8 +76,15 @@ public class Packages {
         public Version version;
         public String gameDir;
         public String saveDir;
+        public LaunchingDetails launchingDetails;
         public String toString() {
             return name+" "+version.toString();
+        }
+        public boolean equals(installPackage pack) {
+            return this.name.equals(pack.name) &&
+            this.version.equals(pack.version) &&
+            this.gameDir.equals(pack.gameDir) &&
+            this.saveDir.equals(pack.saveDir);
         }
     }
     public static class installablePackage {

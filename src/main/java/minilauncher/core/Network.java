@@ -62,6 +62,7 @@ public class Network extends App {
             }
 			
 			callback.run(); // finished.
+            latestVersion = null;
 		}).start();
 	}
 }
