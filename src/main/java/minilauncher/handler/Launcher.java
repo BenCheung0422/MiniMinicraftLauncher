@@ -33,7 +33,7 @@ public class Launcher {
                 }
                 debug = settings.isDebug;
             }
-            process = Runtime.getRuntime().exec("java -jar "+pack.gameDir+" --savedir \""+pack.saveDir+"\""+(debug? " --debug": ""));
+            process = Runtime.getRuntime().exec("java -jar \""+pack.gameDir+"\" --savedir \""+pack.saveDir+"\""+(debug? " --debug": ""));
             if (console != null) {
                 console.inputField.addActionListener(e -> {
                     String input = console.inputField.getText()+"\n";
