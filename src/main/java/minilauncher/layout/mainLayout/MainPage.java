@@ -6,6 +6,9 @@ import java.awt.ComponentOrientation;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.awt.Graphics;
 import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
@@ -14,6 +17,7 @@ import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -21,18 +25,24 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTree;
 import javax.swing.KeyStroke;
+import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeSelectionModel;
 
 import minilauncher.handler.AutoCheckUpdate;
 import minilauncher.handler.Installation;
 import minilauncher.handler.Packages;
 import minilauncher.layout.Layout;
+import minilauncher.layout.componentlayout.ExpandableListCom;
 import minilauncher.layout.dialog.AddInstallDialog;
 import minilauncher.layout.dialog.AutoCheckOptionDialog;
 import minilauncher.layout.dialog.ImportInstallDialog;
@@ -51,10 +61,10 @@ public class MainPage {
         public static JLabel launchOptions1 = new JLabel();
         public static JLabel launchOptions2 = new JLabel();
     }
-    private static JList<String> leftListBar;
     public static JMenu autoUpdater = new JMenu("Auto Updater");
     public static JMenuItem checkUpdatesManual = new JMenuItem("Check Updates");
     private static Layout appLayout;
+    private static JPanel categoryPanels = new JPanel();
     public static void loadLayout(Layout layout) {
         JLabel label = new JLabel("MiniLauncher");
         label.setFont(new Font("Serif", Font.BOLD, 40));
@@ -68,23 +78,7 @@ public class MainPage {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(label);
-        JList<String> list = new JList<String>();
-        list.setModel(new AbstractListModel<String>() {
-            public int getSize() { return Packages.packages.size(); }
-            public String getElementAt(int index) { return Packages.packages.get(index).toString(); }
-        });
-        list.addListSelectionListener(e -> {
-            setCurrPackageDetail(list.getSelectedIndex());
-        });
-        list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-        list.setBackground(new Color(16, 16, 16));
-        list.setForeground(new Color(200, 200, 200));
-        list.setFont(new Font("Serif", Font.PLAIN, 18));
-        list.setFixedCellWidth(300);
-        list.setSelectionForeground(new Color(180, 180, 180));
-        list.setSelectionBackground(new Color(35, 35, 35));
-        leftListBar = list;
+        updatePackCategories();
         JPanel infoTitlePan = new JPanel();
         infoTitlePan.setLayout(new BoxLayout(infoTitlePan, BoxLayout.Y_AXIS));
         JPanel pack = new JPanel();
@@ -132,8 +126,10 @@ public class MainPage {
         pack.add(infoPan, BorderLayout.PAGE_START);
         pack.setBackground(new Color(16, 16, 16));
         infoTitlePan.setBackground(new Color(16, 16, 16));
+        categoryPanels.setLayout(new BoxLayout(categoryPanels, BoxLayout.Y_AXIS));
+        categoryPanels.setBackground(new Color(25, 25, 25));
         packageCurrDetails.detailsPanel = pack;
-        JSplitPane subPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, list, pack);
+        JSplitPane subPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(categoryPanels, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), pack);
         subPanel.setDividerLocation(300);
         subPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         subPanel.setEnabled(false);
@@ -208,9 +204,6 @@ public class MainPage {
         appLayout = layout;
         if (AutoCheckUpdate.updatersCount()!=0) AutoCheckUpdate.checkUpdates();
     }
-    public static void validateLeftListBar() {
-        leftListBar.repaint();
-    }
     private static void setCurrPackageDetail(int index) {
         Packages.installPackage pack = Packages.packages.get(index);
         packageCurrDetails.name.setText(pack.name);
@@ -233,5 +226,60 @@ public class MainPage {
         packageCurrDetails.infoDetailPanel.add(packageCurrDetails.launchOptionsSPanel);
         packageCurrDetails.detailsPanel.add(packageCurrDetails.button, BorderLayout.PAGE_END);
         packageCurrDetails.detailsPanel.repaint();
+    }
+    private static class categoriedPackDetails {
+        public final Packages.installPackage pack;
+        public final int packIndex;
+        public categoriedPackDetails(Packages.installPackage val1, int val2) {
+            pack = val1;
+            packIndex = val2;
+        }
+        public String toString() {
+            return pack.version.toString();
+        }
+    }
+    public static void updatePackCategories() {
+        HashMap<String, ArrayList<categoriedPackDetails>> filteredPacks = new HashMap<>();
+        for (int i = 0; i<Packages.packages.size(); i++) {
+            Packages.installPackage pack = Packages.packages.get(i);
+            String name = pack.name;
+            if (!filteredPacks.containsKey(name)) {
+                ArrayList<categoriedPackDetails> packs = new ArrayList<>();
+                filteredPacks.put(name, packs);
+                packs.add(new categoriedPackDetails(pack, i));
+            } else filteredPacks.get(name).add(new categoriedPackDetails(pack, i));
+        }
+        ArrayList<ExpandableListCom> lists = new ArrayList<>();
+        categoryPanels.removeAll();
+        for (Entry<String, ArrayList<categoriedPackDetails>> packEntry : filteredPacks.entrySet()) {
+            JList<String> l = new JList<>();
+            l.setModel(new AbstractListModel<String>() {
+                public int getSize() { return packEntry.getValue().size(); }
+                public String getElementAt(int index) { return packEntry.getValue().get(index).toString(); }
+            });
+            l.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+            ExpandableListCom listCom = new ExpandableListCom(packEntry.getKey(), l);
+            l.addListSelectionListener(e -> {
+                if (l.getSelectedIndex() == -1) return;
+                for (ExpandableListCom com : lists) if (com.list != l) com.list.clearSelection();
+                setCurrPackageDetail(packEntry.getValue().get(l.getSelectedIndex()).packIndex);
+            });
+            listCom.setBackground(new Color(16, 16, 16));
+            listCom.setForeground(new Color(200, 200, 200));
+            listCom.setFont(new Font("Serif", Font.PLAIN, 18));    
+            listCom.label.setBackground(new Color(16, 16, 16));
+            listCom.label.setForeground(new Color(200, 200, 200));
+            listCom.label.setFont(new Font("Serif", Font.PLAIN, 18));
+            l.setBackground(new Color(16, 16, 16));
+            l.setForeground(new Color(200, 200, 200));
+            l.setFont(new Font("Serif", Font.PLAIN, 18));    
+            l.setFixedCellWidth(280);
+            lists.add(listCom);
+            categoryPanels.add(listCom);
+        }
+        categoryPanels.setBackground(new Color(16, 16, 16));
+        categoryPanels.setForeground(new Color(200, 200, 200));
+        categoryPanels.setFont(new Font("Serif", Font.PLAIN, 18));
+        categoryPanels.repaint();
     }
 }

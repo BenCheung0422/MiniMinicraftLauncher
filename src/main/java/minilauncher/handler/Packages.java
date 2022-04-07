@@ -48,7 +48,7 @@ public class Packages {
         pack.saveDir = saveDir;
         pack.launchingDetails = LaunchingDetails.getDefaultDetails(pack);
         packages.add(pack);
-        MainPage.validateLeftListBar();
+        MainPage.updatePackCategories();
         Save.savePackageList();
     }
     public static installPackage getCurrentLatest(String name) {

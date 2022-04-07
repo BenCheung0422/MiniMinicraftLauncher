@@ -24,6 +24,9 @@ public class AutoCheckOptionDialog extends DialogLayout {
     public AutoCheckOptionDialog(Frame frame, boolean modal) {
         super(frame, modal, new Properties());
         setTitle("Auto Check Updater Options");
+        optionUpdate1.setEnabled(false);
+        optionUpdate2.setEnabled(false);
+        optionUpdate3.setEnabled(false);
         optionCheck1.addActionListener(e -> {
             if (!optionCheck1.isSelected()) {
                 optionUpdate1.setSelected(false);
