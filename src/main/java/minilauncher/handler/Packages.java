@@ -51,6 +51,11 @@ public class Packages {
         MainPage.updatePackCategories();
         Save.savePackageList();
     }
+    public static void removePackage(int index) {
+        packages.remove(index);
+        MainPage.updatePackCategories();
+        Save.savePackageList();
+    }
     public static installPackage getCurrentLatest(String name) {
         installPackage latest = new installPackage();
         latest.version = new Version("0");

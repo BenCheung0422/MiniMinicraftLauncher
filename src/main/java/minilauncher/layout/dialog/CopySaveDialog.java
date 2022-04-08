@@ -1,7 +1,7 @@
 package minilauncher.layout.dialog;
 
-import java.awt.Frame;
 import java.awt.BorderLayout;
+import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -14,17 +14,17 @@ import javax.swing.JPanel;
 
 import minilauncher.handler.Packages;
 
-public class AddInstallDialog extends DialogLayout {
+public class CopySaveDialog extends DialogLayout {
     private JComboBox<String> comboBox;
-    public AddInstallDialog(Frame frame, boolean modal) {
+    public CopySaveDialog(Frame frame, boolean modal) {
         super(frame, modal, new Properties());
-        setTitle("Add Installation");
+        setTitle("Copy Save");
         ArrayList<String> comboBoxSel = new ArrayList<>();
-        for (Packages.installablePackage pack : Packages.installables) comboBoxSel.add(pack.name+" "+pack.version.toString());
+        for (Packages.installPackage pack : Packages.packages) comboBoxSel.add(pack.toString());
         comboBox = new JComboBox<>(comboBoxSel.toArray(new String[0]));
         JPanel buttonPanel = new JPanel();
-        JButton installButton = new JButton("Install");
-        installButton.addActionListener(e -> {
+        JButton importButton = new JButton("Copy");
+        importButton.addActionListener(e -> {
             getData();
             setVisible(false);
             dispose();
@@ -34,18 +34,18 @@ public class AddInstallDialog extends DialogLayout {
             setVisible(false);
             dispose();
         });
-        buttonPanel.add(installButton);
+        buttonPanel.add(importButton);
         buttonPanel.add(cancelButton);
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
-        topPanel.add(new JLabel("Select installation"));
+        topPanel.add(new JLabel("Copy to"));
         topPanel.add(comboBox);
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.add(buttonPanel, BorderLayout.LINE_END);
-        add(topPanel, BorderLayout.CENTER);
+        add(topPanel, BorderLayout.PAGE_START);
         add(bottomPanel, BorderLayout.PAGE_END);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        AddInstallDialog dialog = this;
+        CopySaveDialog dialog = this;
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
                 dialog.setVisible(false);
@@ -54,11 +54,11 @@ public class AddInstallDialog extends DialogLayout {
         });
         setLocationRelativeTo(null);
     }
-    private Packages.installablePackage finalData = null;
+    private Packages.installPackage finalData = null;
     private void getData() {
-        finalData = Packages.installables.get(comboBox.getSelectedIndex());
+        finalData = Packages.packages.get(comboBox.getSelectedIndex());
     }
-    public Packages.installablePackage showDialog() {
+    public Packages.installPackage showDialog() {
         setVisible(true);
         return finalData;
     }

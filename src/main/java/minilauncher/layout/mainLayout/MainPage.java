@@ -6,13 +6,21 @@ import java.awt.ComponentOrientation;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.awt.Graphics;
 import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
 
+import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -23,25 +31,34 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 import minilauncher.handler.AutoCheckUpdate;
 import minilauncher.handler.Installation;
 import minilauncher.handler.Packages;
 import minilauncher.layout.Layout;
+import minilauncher.layout.componentlayout.ButtonColumn;
 import minilauncher.layout.componentlayout.ExpandableListCom;
 import minilauncher.layout.dialog.AddInstallDialog;
 import minilauncher.layout.dialog.AutoCheckOptionDialog;
+import minilauncher.layout.dialog.CopySaveDialog;
 import minilauncher.layout.dialog.ImportInstallDialog;
+import minilauncher.layout.dialog.LaunchActionsDialog;
 import minilauncher.layout.dialog.LaunchOptionsDialog;
+import minilauncher.layout.dialog.MoveSaveDialog;
 
 public class MainPage {
     private static class packageCurrDetails {
@@ -50,11 +67,13 @@ public class MainPage {
         public static JButton button = new JButton("Launch");
         public static JPanel detailsPanel;
         public static JPanel infoPanel;
-        public static JPanel infoDetailPanel;
+        public static Box infoDetailPanel;
         public static JButton launchOptionsButton = new JButton("Options");
+        public static JButton launchActionsButton = new JButton("Actions");
         public static JPanel launchOptionsSPanel = new JPanel();
         public static JLabel launchOptions1 = new JLabel();
         public static JLabel launchOptions2 = new JLabel();
+        public static JPanel savesPanel = new JPanel();
     }
     public static JMenu autoUpdater = new JMenu("Auto Updater");
     public static JMenuItem checkUpdatesManual = new JMenuItem("Check Updates");
@@ -64,7 +83,7 @@ public class MainPage {
         JLabel label = new JLabel("MiniLauncher");
         label.setFont(new Font("Serif", Font.BOLD, 40));
         label.setForeground(Color.WHITE);
-        label.setBackground(new Color(20, 20, 20));
+        label.setBackground(new Color(30, 30, 30));
         label.setBounds(0, 0, layout.getWidth(), 40);
         label.setBorder(BorderFactory.createLineBorder(Color.BLACK));;
         label.setHorizontalAlignment(SwingConstants.CENTER);
@@ -82,16 +101,13 @@ public class MainPage {
         packageCurrDetails.name.setFont(new Font("Serif", Font.PLAIN, 25));
         packageCurrDetails.name.setForeground(Color.WHITE);
         packageCurrDetails.name.setAlignmentX(Component.CENTER_ALIGNMENT);
-        packageCurrDetails.name.setHorizontalAlignment(SwingConstants.CENTER);
-        packageCurrDetails.name.setVerticalAlignment(SwingConstants.CENTER);
         infoTitlePan.add(packageCurrDetails.name);
         packageCurrDetails.version = new JLabel();
         packageCurrDetails.version.setFont(new Font("Serif", Font.PLAIN, 18));
         packageCurrDetails.version.setForeground(Color.WHITE);
         packageCurrDetails.version.setAlignmentX(Component.CENTER_ALIGNMENT);
-        packageCurrDetails.version.setHorizontalAlignment(SwingConstants.CENTER);
-        packageCurrDetails.version.setVerticalAlignment(SwingConstants.CENTER);
         packageCurrDetails.launchOptionsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        packageCurrDetails.launchActionsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         packageCurrDetails.launchOptionsSPanel.setLayout(new BoxLayout(packageCurrDetails.launchOptionsSPanel, BoxLayout.Y_AXIS));
         packageCurrDetails.launchOptions1.setAlignmentX(Component.CENTER_ALIGNMENT);
         packageCurrDetails.launchOptions2.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -102,6 +118,11 @@ public class MainPage {
         packageCurrDetails.launchOptionsSPanel.add(packageCurrDetails.launchOptions1);
         packageCurrDetails.launchOptionsSPanel.add(packageCurrDetails.launchOptions2);
         packageCurrDetails.launchOptionsSPanel.setBackground(new Color(16, 16, 16));
+        packageCurrDetails.savesPanel.setBorder(BorderFactory.createEmptyBorder(16, 0, 0, 0));
+        packageCurrDetails.savesPanel.setLayout(new BoxLayout(packageCurrDetails.savesPanel, BoxLayout.Y_AXIS));
+        packageCurrDetails.savesPanel.setBackground(new Color(16, 16, 16));
+        packageCurrDetails.savesPanel.setFont(new Font("Serif", Font.PLAIN, 20));
+        packageCurrDetails.savesPanel.setForeground(Color.WHITE);
         infoTitlePan.add(packageCurrDetails.version);
         infoTitlePan.setAlignmentX(Component.CENTER_ALIGNMENT);
         JPanel infoPan = new JPanel();
@@ -111,8 +132,7 @@ public class MainPage {
         infoEmptySubPan.setSize(0, 60);
         infoEmptySubPan.setBackground(new Color(16, 16, 16));
         infoPan.add(infoEmptySubPan);
-        JPanel infoDetailPan = new JPanel();
-        infoDetailPan.setLayout(new BoxLayout(infoDetailPan, BoxLayout.Y_AXIS));
+        Box infoDetailPan = new Box(BoxLayout.Y_AXIS);
         infoDetailPan.setBackground(new Color(16, 16, 16));
         infoPan.add(infoDetailPan);
         packageCurrDetails.infoDetailPanel = infoDetailPan;
@@ -124,7 +144,11 @@ public class MainPage {
         categoryPanels.setLayout(new BoxLayout(categoryPanels, BoxLayout.Y_AXIS));
         categoryPanels.setBackground(new Color(25, 25, 25));
         packageCurrDetails.detailsPanel = pack;
-        JSplitPane subPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(categoryPanels, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), pack);
+        JScrollPane lsubPan = new JScrollPane(categoryPanels, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane rsubPan = new JScrollPane(pack, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        lsubPan.setBackground(new Color(25, 25, 25));
+        rsubPan.setBackground(new Color(16, 16, 16));
+        JSplitPane subPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, lsubPan, rsubPan);
         subPanel.setDividerLocation(300);
         subPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         subPanel.setEnabled(false);
@@ -215,10 +239,135 @@ public class MainPage {
                 packageCurrDetails.launchOptions2.setText("Show console: "+(pack.launchingDetails.isConsole? "Yes": "No"));
             }
         });
+        for (ActionListener al : packageCurrDetails.launchActionsButton.getActionListeners()) packageCurrDetails.launchActionsButton.removeActionListener(al);
+        packageCurrDetails.launchActionsButton.addActionListener(e -> {
+            new LaunchActionsDialog(appLayout, true, index).showDialog();
+        });
         packageCurrDetails.launchOptions1.setText("Is in debug mode: "+(pack.launchingDetails.isDebug? "Yes": "No"));
         packageCurrDetails.launchOptions2.setText("Show console: "+(pack.launchingDetails.isConsole? "Yes": "No"));
-        packageCurrDetails.infoDetailPanel.add(packageCurrDetails.launchOptionsButton);
-        packageCurrDetails.infoDetailPanel.add(packageCurrDetails.launchOptionsSPanel);
+        packageCurrDetails.savesPanel.removeAll();
+        packageCurrDetails.savesPanel.add(new JLabel("Saves") {{
+            setFont(new Font("Serif", Font.PLAIN, 20));
+            setForeground(Color.WHITE);
+            setAlignmentX(Component.CENTER_ALIGNMENT);
+        }});
+        ArrayList<Path> savesPaths;
+        {
+            List<Path> result = Installation.getSaves(pack.name, pack.saveDir);
+            if (result != null) savesPaths = new ArrayList<>(result);
+            else savesPaths = new ArrayList<>();
+        }
+        ArrayList<Object[]> savesList = new ArrayList<>();
+        for (Path saveDir : savesPaths) {
+            savesList.add(new Object[] {saveDir.getFileName(), "Copy", "Move", "Delete"});
+        }
+        String[] columnNames = {"Save Name", "Copy", "Move", "Delete"};
+        JTable savesTable = new JTable();
+        savesTable.setTableHeader(null);
+        savesTable.setModel(new DefaultTableModel() {
+            public String getColumnName(int col) {
+                return columnNames[col].toString();
+            }
+            public int getRowCount() { return savesList.size(); }
+            public int getColumnCount() { return columnNames.length; }
+            public Object getValueAt(int row, int col) {
+                return savesList.get(row)[col];
+            }
+            public boolean isCellEditable(int row, int col) { return col>0; }
+        });
+        new ButtonColumn(savesTable, new AbstractAction() { // Copy
+            public void actionPerformed(ActionEvent e){
+                int modelRow = Integer.valueOf( e.getActionCommand() );
+                Packages.installPackage pack = new CopySaveDialog(appLayout, true).showDialog();
+                if (pack != null) {
+                    String targetDir = Installation.getSavesDir(pack.name, pack.saveDir);
+                    if (targetDir == null) JOptionPane.showMessageDialog(appLayout, "Unknown target game name.", "Error on compatibility", JOptionPane.ERROR_MESSAGE);
+                    else
+                        try {
+                            new File(targetDir).mkdirs();
+                            Files.copy(savesPaths.get(modelRow), Paths.get(targetDir+"/"+savesPaths.get(modelRow).getFileName()), StandardCopyOption.REPLACE_EXISTING);
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+                }
+            }
+        }, 1);
+        new ButtonColumn(savesTable, new AbstractAction() { // Move
+            public void actionPerformed(ActionEvent e){
+                JTable table = (JTable)e.getSource();
+                int modelRow = Integer.valueOf( e.getActionCommand() );
+                Packages.installPackage pack = new MoveSaveDialog(appLayout, true).showDialog();
+                if (pack != null) {
+                    String targetDir = Installation.getSavesDir(pack.name, pack.saveDir);
+                    if (targetDir == null) JOptionPane.showMessageDialog(appLayout, "Unknown target game name.", "Error on compatibility", JOptionPane.ERROR_MESSAGE);
+                    else
+                        try {
+                            new File(targetDir).mkdirs();
+                            Files.move(savesPaths.get(modelRow), Paths.get(targetDir+"/"+savesPaths.get(modelRow).getFileName()), StandardCopyOption.REPLACE_EXISTING);
+                            ((DefaultTableModel)table.getModel()).removeRow(modelRow);
+                            savesPaths.remove(modelRow);
+                            savesList.remove(modelRow);
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+                }
+                if (savesTable.getRowCount()==0) packageCurrDetails.savesPanel.add(new JLabel("No save") {{
+                    setFont(new Font("Serif", Font.PLAIN, 16));
+                    setForeground(Color.WHITE);
+                    setAlignmentX(Component.CENTER_ALIGNMENT);
+                }});
+                packageCurrDetails.savesPanel.revalidate();
+                packageCurrDetails.detailsPanel.repaint();
+            }
+        }, 2);
+        new ButtonColumn(savesTable, new AbstractAction() { // Delete
+            public void actionPerformed(ActionEvent e){
+                JTable table = (JTable)e.getSource();
+                int modelRow = Integer.valueOf( e.getActionCommand() );
+                try {
+                    Installation.deleteDirectoryStream(savesPaths.get(modelRow));
+                    ((DefaultTableModel)table.getModel()).removeRow(modelRow);
+                    savesPaths.remove(modelRow);
+                    savesList.remove(modelRow);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                if (savesTable.getRowCount()==0) packageCurrDetails.savesPanel.add(new JLabel("No save") {{
+                    setFont(new Font("Serif", Font.PLAIN, 16));
+                    setForeground(Color.WHITE);
+                    setAlignmentX(Component.CENTER_ALIGNMENT);
+                }});
+                packageCurrDetails.savesPanel.revalidate();
+                packageCurrDetails.detailsPanel.repaint();
+            }
+        }, 3);
+        savesTable.setCellSelectionEnabled(false);
+        savesTable.setColumnSelectionAllowed(false);
+        savesTable.setRowSelectionAllowed(false);
+        savesTable.setFocusable(false);
+        savesTable.setAlignmentX(Component.CENTER_ALIGNMENT);
+        savesTable.setFont(new Font("Serif", Font.PLAIN, 18));
+        savesTable.setForeground(Color.GRAY);
+        savesTable.setBackground(new Color(40, 40, 40));
+        savesTable.setRowHeight(25);
+        savesTable.getColumnModel().getColumn(0).setMinWidth(400);
+        savesTable.setAutoResizeMode( JTable.AUTO_RESIZE_ALL_COLUMNS );
+        packageCurrDetails.savesPanel.add(savesTable);
+        if (savesTable.getRowCount()==0) packageCurrDetails.savesPanel.add(new JLabel("No save") {{
+            setFont(new Font("Serif", Font.PLAIN, 16));
+            setForeground(Color.WHITE);
+            setAlignmentX(Component.CENTER_ALIGNMENT);
+        }});
+        packageCurrDetails.savesPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        packageCurrDetails.savesPanel.revalidate();
+        if (packageCurrDetails.launchActionsButton.getParent()!=packageCurrDetails.infoDetailPanel) {
+            packageCurrDetails.infoDetailPanel.add(packageCurrDetails.launchOptionsButton);
+            packageCurrDetails.infoDetailPanel.add(Box.createVerticalStrut(8));
+            packageCurrDetails.infoDetailPanel.add(packageCurrDetails.launchActionsButton);
+            packageCurrDetails.infoDetailPanel.add(Box.createVerticalStrut(10));
+            packageCurrDetails.infoDetailPanel.add(packageCurrDetails.launchOptionsSPanel);
+            packageCurrDetails.infoDetailPanel.add(packageCurrDetails.savesPanel);
+        }
         packageCurrDetails.detailsPanel.add(packageCurrDetails.button, BorderLayout.PAGE_END);
         packageCurrDetails.detailsPanel.repaint();
     }

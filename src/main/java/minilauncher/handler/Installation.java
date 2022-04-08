@@ -1,12 +1,18 @@
 package minilauncher.handler;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,6 +20,7 @@ import org.json.JSONObject;
 import minilauncher.core.App;
 import minilauncher.core.Log;
 import minilauncher.core.Network;
+import minilauncher.layout.mainLayout.MainPage;
 import minilauncher.saveload.Version;
 
 public class Installation {
@@ -71,5 +78,38 @@ public class Installation {
         }
         new File(gameDir+"/data/").mkdirs();
         Packages.addPackage(gameName, gameVersion, gameDir+"/game.jar", gameDir+"/data/");
+    }
+    public static void removeInstall(int packageIndex, boolean keepData) {
+        Packages.installPackage pack = Packages.packages.get(packageIndex);
+        try {
+            Files.delete(Paths.get(pack.gameDir));
+            if (!keepData) deleteDirectoryStream(Paths.get(pack.saveDir));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Packages.removePackage(packageIndex);
+    }
+    public static void deleteDirectoryStream(Path path) throws IOException {
+        Files.walk(path)
+          .sorted(Comparator.reverseOrder())
+          .map(Path::toFile)
+          .forEach(File::delete);
+    }
+    public static List<Path> getSaves(String name, String saveDir) {
+        String savesDir = getSavesDir(name, saveDir);
+        if (savesDir == null) return null;
+        if (!new File(savesDir).exists()) return null;
+        return Arrays.stream(new File(savesDir).list(new FilenameFilter() {
+            @Override
+            public boolean accept(File current, String name) {
+              return new File(current, name).isDirectory();
+            }
+        })).map(s -> Paths.get(savesDir+"/"+s)).collect(Collectors.toList());
+    }
+    public static String getSavesDir(String name, String saveDir) {
+        if (name.equals("Minicraft+")) return saveDir+"/playminicraft/mods/Minicraft_Plus/saves";
+        else if (name.equals("Aircraft")) return saveDir+"/playminicraft/mods/Aircraft/saves";
+        else if (name.equals("Minicraft Squared")) return saveDir+"/playminicraft/mods/Minicraft_2/saves";
+        else return null;
     }
 }
