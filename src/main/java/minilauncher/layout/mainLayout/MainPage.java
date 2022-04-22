@@ -42,10 +42,9 @@ import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
+import minilauncher.core.Log;
 import minilauncher.handler.AutoCheckUpdate;
 import minilauncher.handler.Installation;
 import minilauncher.handler.Packages;
@@ -178,6 +177,7 @@ public class MainPage {
         panel.add(subPanel);
         panel.setBackground(new Color(15, 15, 15));
         Loading.removeLayout();
+        Log.debug("Removed Loading Screen");
         layout.getContentPane().add(panel);
         layout.getContentPane().setBackground(new Color(10, 10, 10));
         JMenuBar menuBar = layout.getJMenuBar();
@@ -222,6 +222,7 @@ public class MainPage {
         layout.validate();
         appLayout = layout;
         if (AutoCheckUpdate.updatersCount()!=0) AutoCheckUpdate.checkUpdates();
+        Log.debug("Loaded MainPage Screen.");
     }
     private static void setCurrPackageDetail(int index) {
         Packages.installPackage pack = Packages.packages.get(index);

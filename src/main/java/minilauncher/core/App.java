@@ -68,6 +68,7 @@ public class App {
             public void windowDeactivated(WindowEvent e) {}
         });
         Loading.loadLayout(mainLayout);
+        Log.debug("Loaded Loading Screen.");
         mainLayout.setVisible(true);
         {
             OS = System.getProperty("os.name").toLowerCase();
@@ -91,6 +92,7 @@ public class App {
         }
         FileHandler.makeDirs();
         Packages.init();
+        Log.debug("Loading MainPage Screen.");
         MainPage.loadLayout(mainLayout);
         layout = mainLayout;
         Runner.run();
