@@ -17,10 +17,10 @@ public class Loading {
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setVerticalAlignment(SwingConstants.CENTER);
         Loading.label = label;
-        layout.add(label, BorderLayout.CENTER);
+        layout.getContentPane().add(label, BorderLayout.CENTER);
         Loading.layout = layout;
     }
     public static void removeLayout() {
-        layout.remove(label);
+        layout.getContentPane().remove(label);
     }
 }
