@@ -1,14 +1,20 @@
 package minilauncher.handler;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import javax.swing.JButton;
 
 import java.awt.Color;
 import java.awt.event.ActionListener;
 
+import minilauncher.core.App;
 import minilauncher.core.Log;
 import minilauncher.layout.LaunchConsole;
 
@@ -33,7 +39,33 @@ public class Launcher {
                 }
                 debug = settings.isDebug;
             }
-            process = Runtime.getRuntime().exec("java -jar \""+pack.gameDir+"\" --savedir \""+pack.saveDir+"\""+(debug? " --debug": ""));
+            // java "-Dfabric.skipMcProvider=true" "-Dfabric.side=client" "-Dfabric.gameJarPath=minicraft_plus-2.0.7.jar" -classpath "jars\fabric-loader-0.13.3.jar;jars\MinicraftGameProvider-1.1.1.jar;fabricdeps\*" net.fabricmc.loader.launch.knot.KnotClient
+            // if (!settings.withFabric) 
+            process = Runtime.getRuntime().exec(!settings.withFabric?
+                new String[] {"java", "-jar", pack.gameDir, "--savedir", pack.saveDir, debug? "--debug": ""}:
+                new String[] {"java", "-Dfabric.skipMcProvider=true", "-Dfabric.side=client", "-Dfabric.gameJarPath="+pack.gameDir, "-classpath", App.dataDir+"\\fabric\\*", "net.fabricmc.loader.launch.knot.KnotClient", "--savedir", pack.saveDir, debug? "--debug": ""}
+            );
+            // else {
+                // Class<?> KnotClient;
+                // ClassLoader loader = new Thread() {
+                //     @Override
+                //     public void run() {
+                //         System.setProperty("fabric.skipMcProvider", "true");
+                //         System.setProperty("fabric.side", "client");
+                //         System.setProperty("fabric.gameJarPath", path);
+                //         KnotClient.main(new String[] {"--gameDir", lPath, "--savedir", vPath});
+                //     }
+                // }.getContextClassLoader();
+                // for (File f : new File(App.dataDir+"/fabric").listFiles()) {
+                //     if (f.getName().endsWith(".jar")) {
+                //         try (URLClassLoader child = new URLClassLoader(
+                //                 new URL[] {f.toURI().toURL()},
+                //                 loader
+                //         )) {
+                //         }
+                //     }
+                // }
+            // }
             if (console != null) {
                 console.inputField.addActionListener(e -> {
                     String input = console.inputField.getText()+"\n";
@@ -91,6 +123,7 @@ public class Launcher {
     public static class LauncherSettings {
         public boolean isDebug = false;
         public boolean isConsole = false;
+        public boolean withFabric = false;
     }
     public void removeLaunching() {removeLaunching(true);}
     public void removeLaunching(boolean removeSelf) {
@@ -118,6 +151,7 @@ public class Launcher {
         LauncherSettings settings = new LauncherSettings();
         settings.isDebug = pack.launchingDetails.isDebug;
         settings.isConsole = pack.launchingDetails.isConsole;
+        settings.withFabric = pack.launchingDetails.withFabric;
         new Launcher(pack, btn, settings);
     }
     public static void launchGame(Packages.installPackage pack, JButton btn, LauncherSettings settings) {

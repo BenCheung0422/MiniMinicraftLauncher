@@ -72,6 +72,7 @@ public class MainPage {
         public static JPanel launchOptionsSPanel = new JPanel();
         public static JLabel launchOptions1 = new JLabel();
         public static JLabel launchOptions2 = new JLabel();
+        public static JLabel launchOptions3 = new JLabel();
         public static JPanel savesPanel = new JPanel();
     }
     public static JMenu autoUpdater = new JMenu("Auto Updater");
@@ -110,10 +111,13 @@ public class MainPage {
         packageCurrDetails.launchOptionsSPanel.setLayout(new BoxLayout(packageCurrDetails.launchOptionsSPanel, BoxLayout.Y_AXIS));
         packageCurrDetails.launchOptions1.setAlignmentX(Component.CENTER_ALIGNMENT);
         packageCurrDetails.launchOptions2.setAlignmentX(Component.CENTER_ALIGNMENT);
+        packageCurrDetails.launchOptions3.setAlignmentX(Component.CENTER_ALIGNMENT);
         packageCurrDetails.launchOptions1.setForeground(Color.WHITE);
         packageCurrDetails.launchOptions2.setForeground(Color.WHITE);
+        packageCurrDetails.launchOptions3.setForeground(Color.WHITE);
         packageCurrDetails.launchOptions1.setFont(new Font("Serif", Font.PLAIN, 20));
         packageCurrDetails.launchOptions2.setFont(new Font("Serif", Font.PLAIN, 20));
+        packageCurrDetails.launchOptions3.setFont(new Font("Serif", Font.PLAIN, 20));
         packageCurrDetails.launchOptionsSPanel.add(packageCurrDetails.launchOptions1);
         packageCurrDetails.launchOptionsSPanel.add(packageCurrDetails.launchOptions2);
         packageCurrDetails.launchOptionsSPanel.setBackground(new Color(16, 16, 16));
@@ -194,6 +198,14 @@ public class MainPage {
         });
         autoUpdater.add(checkUpdatesManual);
         menuBar.add(autoUpdater);
+        JMenu fabricMenu = new JMenu("Fabric");
+        JMenuItem installFabric = new JMenuItem("Install MiniFabric");
+        installFabric.addActionListener(e -> Installation.installFabric());
+        fabricMenu.add(installFabric);
+        JMenuItem removeFabric = new JMenuItem("Uninstall MiniFabric");
+        removeFabric.addActionListener(e -> Installation.removeFabric());
+        fabricMenu.add(removeFabric);
+        menuBar.add(fabricMenu);
         JMenu installMenu = new JMenu("Installations");
         JMenuItem importInstallMenu = new JMenuItem("Import installation");
         importInstallMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.ALT_MASK));
@@ -236,8 +248,10 @@ public class MainPage {
             if (results != null) {
                 pack.launchingDetails.isDebug = results.isDebug;
                 pack.launchingDetails.isConsole = results.isConsole;
+                pack.launchingDetails.withFabric = results.withFabric;
                 packageCurrDetails.launchOptions1.setText("Is in debug mode: "+(pack.launchingDetails.isDebug? "Yes": "No"));
                 packageCurrDetails.launchOptions2.setText("Show console: "+(pack.launchingDetails.isConsole? "Yes": "No"));
+                packageCurrDetails.launchOptions3.setText("With MiniFabric: "+(pack.launchingDetails.withFabric? "Yes": "No"));
             }
         });
         for (ActionListener al : packageCurrDetails.launchActionsButton.getActionListeners()) packageCurrDetails.launchActionsButton.removeActionListener(al);
@@ -246,6 +260,7 @@ public class MainPage {
         });
         packageCurrDetails.launchOptions1.setText("Is in debug mode: "+(pack.launchingDetails.isDebug? "Yes": "No"));
         packageCurrDetails.launchOptions2.setText("Show console: "+(pack.launchingDetails.isConsole? "Yes": "No"));
+        packageCurrDetails.launchOptions3.setText("With MiniFabric: "+(pack.launchingDetails.withFabric? "Yes": "No"));
         packageCurrDetails.savesPanel.removeAll();
         packageCurrDetails.savesPanel.add(new JLabel("Saves") {{
             setFont(new Font("Serif", Font.PLAIN, 20));

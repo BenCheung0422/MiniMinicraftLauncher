@@ -11,14 +11,19 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
+import minilauncher.handler.Fabric;
+
 public class LaunchOptionsDialog extends DialogLayout {
     private JCheckBox isDebug = new JCheckBox("In debug mode");
     private JCheckBox isConsole = new JCheckBox("Show console/terminal");
+    private JCheckBox withFabric = new JCheckBox("MiniFabric");
     public LaunchOptionsDialog(Frame frame, boolean modal) {
         super(frame, modal, new Properties());
         setTitle("Launch Option");
         isDebug.setAlignmentX(Component.LEFT_ALIGNMENT);
         isConsole.setAlignmentX(Component.LEFT_ALIGNMENT);
+        withFabric.setAlignmentX(Component.LEFT_ALIGNMENT);
+        if (!Fabric.installed) withFabric.setEnabled(false);
         JPanel buttonPanel = new JPanel();
         JButton installButton = new JButton("Apply");
         installButton.addActionListener(e -> {
@@ -37,6 +42,7 @@ public class LaunchOptionsDialog extends DialogLayout {
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
         topPanel.add(isDebug);
         topPanel.add(isConsole);
+        topPanel.add(withFabric);
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.add(buttonPanel, BorderLayout.LINE_END);
         add(topPanel, BorderLayout.PAGE_START);
@@ -53,7 +59,7 @@ public class LaunchOptionsDialog extends DialogLayout {
     }
     private Results finalData = null;
     private void getData() {
-        finalData = new Results(isDebug.isSelected(), isConsole.isSelected());
+        finalData = new Results(isDebug.isSelected(), isConsole.isSelected(), withFabric.isSelected());
     }
     public Results showDialog() {
         setVisible(true);
@@ -62,9 +68,11 @@ public class LaunchOptionsDialog extends DialogLayout {
     public static class Results {
         public boolean isDebug;
         public boolean isConsole;
-        public Results(boolean val1, boolean val2) {
+        public boolean withFabric;
+        public Results(boolean val1, boolean val2, boolean val3) {
             isDebug = val1;
             isConsole = val2;
+            withFabric = val3;
         }
     }
 }

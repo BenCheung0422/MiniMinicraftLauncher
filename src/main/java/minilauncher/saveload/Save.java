@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import minilauncher.core.App;
 import minilauncher.core.Log;
 import minilauncher.handler.AutoCheckUpdate;
+import minilauncher.handler.Fabric;
 import minilauncher.handler.Packages;
 
 public class Save {
@@ -25,6 +26,13 @@ public class Save {
             jsonarray.put(packJson);
         }
         json.put("installations", jsonarray);
+        JSONObject fabricObj = new JSONObject();
+        fabricObj.put("installed", Fabric.installed);
+        if (Fabric.installed) {
+            fabricObj.put("providerVersion", Fabric.installPack.gameProviderVer);
+            fabricObj.put("loaderVersion", Fabric.installPack.fabricLoaderVer);
+        }
+        json.put("fabric", fabricObj);
         try {
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(App.dataDir+"/installations.json"));
             bufferedWriter.write(json.toString(4));

@@ -10,6 +10,7 @@ public class LaunchingDetails {
     public JButton launchButton = new JButton("Launch");
     public boolean isDebug = false;
     public boolean isConsole = false;
+    public boolean withFabric = false;
     public static LaunchingDetails getDefaultDetails(Packages.installPackage pack) {
         LaunchingDetails launchingDetails = new LaunchingDetails();
         launchingDetails.launchButton.setForeground(Color.BLACK);

@@ -25,6 +25,14 @@ public class Packages {
             pack.launchingDetails = LaunchingDetails.getDefaultDetails(pack);
             packages.add(pack);
         }
+        if (Installation.installations.has("fabric")) {
+            JSONObject fabricObj = Installation.installations.getJSONObject("fabric");
+            if (fabricObj.optBoolean("installed", false)) {
+                Fabric.installPack = new Fabric.FabircPackageInfo();
+                Fabric.installPack.gameProviderVer = new Version(fabricObj.getString("providerVersion"));
+                Fabric.installPack.fabricLoaderVer = new Version(fabricObj.getString("loaderVersion"));
+            }
+        }
         JSONArray installables = Installation.installables;
         for (int i = 0; i<installables.length(); i++) {
             JSONObject game = installables.getJSONObject(i);
