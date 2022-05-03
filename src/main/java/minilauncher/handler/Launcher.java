@@ -45,27 +45,6 @@ public class Launcher {
                 new String[] {"java", "-jar", pack.gameDir, "--savedir", pack.saveDir, debug? "--debug": ""}:
                 new String[] {"java", "-Dfabric.skipMcProvider=true", "-Dfabric.side=client", "-Dfabric.gameJarPath="+pack.gameDir, "-classpath", App.dataDir+"\\fabric\\*", "net.fabricmc.loader.launch.knot.KnotClient", "--savedir", pack.saveDir, debug? "--debug": ""}
             );
-            // else {
-                // Class<?> KnotClient;
-                // ClassLoader loader = new Thread() {
-                //     @Override
-                //     public void run() {
-                //         System.setProperty("fabric.skipMcProvider", "true");
-                //         System.setProperty("fabric.side", "client");
-                //         System.setProperty("fabric.gameJarPath", path);
-                //         KnotClient.main(new String[] {"--gameDir", lPath, "--savedir", vPath});
-                //     }
-                // }.getContextClassLoader();
-                // for (File f : new File(App.dataDir+"/fabric").listFiles()) {
-                //     if (f.getName().endsWith(".jar")) {
-                //         try (URLClassLoader child = new URLClassLoader(
-                //                 new URL[] {f.toURI().toURL()},
-                //                 loader
-                //         )) {
-                //         }
-                //     }
-                // }
-            // }
             if (console != null) {
                 console.inputField.addActionListener(e -> {
                     String input = console.inputField.getText()+"\n";

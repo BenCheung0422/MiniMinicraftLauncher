@@ -23,6 +23,7 @@ import minilauncher.core.App;
 import minilauncher.core.Log;
 import minilauncher.core.Network;
 import minilauncher.layout.mainLayout.MainPage;
+import minilauncher.saveload.Save;
 import minilauncher.saveload.Version;
 
 public class Installation {
@@ -139,10 +140,11 @@ public class Installation {
             }
             zis.closeEntry();
             Fabric.installPack = new Fabric.FabircPackageInfo();
-            Fabric.installPack.fabricLoaderVer = new Version("0.13.3");
+            Fabric.installPack.gameProviderVer= new Version("0.13.3");
             Fabric.installPack.fabricLoaderVer = new Version("1.1.1");
             Fabric.installed = true;
             Log.debug("Fabric installed.");
+            Save.savePackageList();
         } catch (IOException e) {
             e.printStackTrace();
             Log.debug("Error on installing Fabric.");
@@ -155,6 +157,7 @@ public class Installation {
         for (File f : files) f.delete();
         Fabric.installPack = null;
         Fabric.installed = false;
+        Save.savePackageList();
     }
 
     // protect zip slip attack

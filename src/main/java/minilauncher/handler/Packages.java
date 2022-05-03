@@ -31,6 +31,7 @@ public class Packages {
                 Fabric.installPack = new Fabric.FabircPackageInfo();
                 Fabric.installPack.gameProviderVer = new Version(fabricObj.getString("providerVersion"));
                 Fabric.installPack.fabricLoaderVer = new Version(fabricObj.getString("loaderVersion"));
+                Fabric.installed = true;
             }
         }
         JSONArray installables = Installation.installables;

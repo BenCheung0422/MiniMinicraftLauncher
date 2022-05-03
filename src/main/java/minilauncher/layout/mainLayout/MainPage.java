@@ -120,6 +120,7 @@ public class MainPage {
         packageCurrDetails.launchOptions3.setFont(new Font("Serif", Font.PLAIN, 20));
         packageCurrDetails.launchOptionsSPanel.add(packageCurrDetails.launchOptions1);
         packageCurrDetails.launchOptionsSPanel.add(packageCurrDetails.launchOptions2);
+        packageCurrDetails.launchOptionsSPanel.add(packageCurrDetails.launchOptions3);
         packageCurrDetails.launchOptionsSPanel.setBackground(new Color(16, 16, 16));
         packageCurrDetails.savesPanel.setBorder(BorderFactory.createEmptyBorder(16, 0, 0, 0));
         packageCurrDetails.savesPanel.setLayout(new BoxLayout(packageCurrDetails.savesPanel, BoxLayout.Y_AXIS));
