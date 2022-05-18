@@ -34,6 +34,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
@@ -44,10 +45,14 @@ import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 import javax.swing.table.DefaultTableModel;
 
+import minilauncher.core.App;
 import minilauncher.core.Log;
+import minilauncher.core.Settings;
 import minilauncher.handler.AutoCheckUpdate;
+import minilauncher.handler.Fabric;
 import minilauncher.handler.Installation;
 import minilauncher.handler.Packages;
+import minilauncher.handler.StatusBar;
 import minilauncher.layout.Layout;
 import minilauncher.layout.componentlayout.ButtonColumn;
 import minilauncher.layout.componentlayout.ExpandableListCom;
@@ -58,6 +63,7 @@ import minilauncher.layout.dialog.ImportInstallDialog;
 import minilauncher.layout.dialog.LaunchActionsDialog;
 import minilauncher.layout.dialog.LaunchOptionsDialog;
 import minilauncher.layout.dialog.MoveSaveDialog;
+import minilauncher.saveload.Save;
 
 public class MainPage {
     private static class packageCurrDetails {
@@ -79,13 +85,15 @@ public class MainPage {
     public static JMenuItem checkUpdatesManual = new JMenuItem("Check Updates");
     private static Layout appLayout;
     private static JPanel categoryPanels = new JPanel();
+    public static JMenu fabricMenu = new JMenu("Fabric");
+
     public static void loadLayout(Layout layout) {
         JLabel label = new JLabel("MiniLauncher");
         label.setFont(new Font("Serif", Font.BOLD, 40));
         label.setForeground(Color.WHITE);
         label.setBackground(new Color(30, 30, 30));
         label.setBounds(0, 0, layout.getWidth(), 40);
-        label.setBorder(BorderFactory.createLineBorder(Color.BLACK));;
+        label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setVerticalAlignment(SwingConstants.CENTER);
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -184,6 +192,17 @@ public class MainPage {
         Loading.removeLayout();
         Log.debug("Removed Loading Screen");
         layout.getContentPane().add(panel);
+        JLabel statusLabel = new JLabel();
+        StatusBar.setStatusBar(statusLabel);
+        StatusBar.setVisibleFunction(() -> {
+            layout.getContentPane().add(statusLabel, BorderLayout.SOUTH);
+            layout.revalidate();
+        });
+        StatusBar.setInvisibleFunction(() -> {
+            layout.getContentPane().remove(statusLabel);
+            layout.revalidate();
+        });
+        StatusBar.initBar();
         layout.getContentPane().setBackground(new Color(10, 10, 10));
         JMenuBar menuBar = layout.getJMenuBar();
         JMenu optionsMenu = menuBar.getMenu(0);
@@ -193,13 +212,19 @@ public class MainPage {
         });
         updateOptionsMenu.setMnemonic(KeyEvent.VK_U);
         optionsMenu.add(updateOptionsMenu, 0);
+        optionsMenu.add(new JSeparator(), 1);
+        JMenuItem aboutMenu = new JMenuItem("About");
+        aboutMenu.addActionListener(e -> {
+            JOptionPane.showMessageDialog(layout, "Minicraft Launcher\nApp version: "+App.VERSION+"\nDeveloper: Ben Forge (Github: BenCheung0422)\nGithub Repository: https://github.com/BenCheung0422/MiniMinicraftLauncher\nLicense: GPL-3.0", "About", JOptionPane.INFORMATION_MESSAGE);
+        });
+        optionsMenu.add(aboutMenu, 2);
+        optionsMenu.add(new JSeparator(), 3);
         autoUpdater.setMnemonic(KeyEvent.VK_A);
         checkUpdatesManual.addActionListener(e -> {
             AutoCheckUpdate.checkUpdates();
         });
         autoUpdater.add(checkUpdatesManual);
         menuBar.add(autoUpdater);
-        JMenu fabricMenu = new JMenu("Fabric");
         JMenuItem installFabric = new JMenuItem("Install MiniFabric");
         installFabric.addActionListener(e -> Installation.installFabric());
         fabricMenu.add(installFabric);
@@ -235,7 +260,9 @@ public class MainPage {
         layout.validate();
         appLayout = layout;
         if (AutoCheckUpdate.updatersCount()!=0) AutoCheckUpdate.checkUpdates();
+        Fabric.updateFabricStatusMenu();
         Log.debug("Loaded MainPage Screen.");
+        if (Settings.autoUpdateOnStart) AutoCheckUpdate.checkUpdates();
     }
     private static void setCurrPackageDetail(int index) {
         Packages.installPackage pack = Packages.packages.get(index);
@@ -245,7 +272,7 @@ public class MainPage {
         packageCurrDetails.button = pack.launchingDetails.launchButton;
         for (ActionListener al : packageCurrDetails.launchOptionsButton.getActionListeners()) packageCurrDetails.launchOptionsButton.removeActionListener(al);
         packageCurrDetails.launchOptionsButton.addActionListener(e -> {
-            LaunchOptionsDialog.Results results = new LaunchOptionsDialog(appLayout, true).showDialog();
+            LaunchOptionsDialog.Results results = new LaunchOptionsDialog(appLayout, true, pack.launchingDetails.isDebug, pack.launchingDetails.isConsole, pack.launchingDetails.withFabric).showDialog();
             if (results != null) {
                 pack.launchingDetails.isDebug = results.isDebug;
                 pack.launchingDetails.isConsole = results.isConsole;
@@ -253,6 +280,7 @@ public class MainPage {
                 packageCurrDetails.launchOptions1.setText("Is in debug mode: "+(pack.launchingDetails.isDebug? "Yes": "No"));
                 packageCurrDetails.launchOptions2.setText("Show console: "+(pack.launchingDetails.isConsole? "Yes": "No"));
                 packageCurrDetails.launchOptions3.setText("With MiniFabric: "+(pack.launchingDetails.withFabric? "Yes": "No"));
+                Save.saveSettings();
             }
         });
         for (ActionListener al : packageCurrDetails.launchActionsButton.getActionListeners()) packageCurrDetails.launchActionsButton.removeActionListener(al);

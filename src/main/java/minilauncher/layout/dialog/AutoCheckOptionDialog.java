@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import minilauncher.handler.AutoCheckUpdate;
+import minilauncher.saveload.Save;
 
 public class AutoCheckOptionDialog extends DialogLayout {
     private JCheckBox optionCheck1 = new JCheckBox("Check");
@@ -51,6 +52,31 @@ public class AutoCheckOptionDialog extends DialogLayout {
                 optionUpdate3.setEnabled(true);
             }
         });
+        for (AutoCheckUpdate auto : AutoCheckUpdate.getUpdaters()) {
+            switch (auto.getName()) {
+                case "Minicraft+":
+                    optionCheck1.setSelected(true);
+                    optionUpdate1.setEnabled(true);
+                    if (auto.getAutoUpdate()) {
+                        optionUpdate1.setSelected(true);
+                    }
+                    break;
+                case "Aircraft":
+                    optionCheck2.setSelected(true);
+                    optionUpdate2.setEnabled(true);
+                    if (auto.getAutoUpdate()) {
+                        optionUpdate2.setSelected(true);
+                    }
+                    break;
+                case "Minicraft Square":
+                    optionCheck3.setSelected(true);
+                    optionUpdate3.setEnabled(true);
+                    if (auto.getAutoUpdate()) {
+                        optionUpdate3.setSelected(true);
+                    }
+                    break;
+            }
+        }
         JPanel optionPanel1 = new JPanel();
         optionPanel1.setLayout(new BoxLayout(optionPanel1, BoxLayout.X_AXIS));
         optionPanel1.add(new JLabel("Minicraft+: "));
@@ -115,6 +141,7 @@ public class AutoCheckOptionDialog extends DialogLayout {
             AutoCheckUpdate.addCheckUpdate("Minicraft Square", optionUpdate3.isSelected());
         }
         AutoCheckUpdate.checkUpdates();
+        Save.saveSettings();
     }
     public String showDialog() {
         setVisible(true);

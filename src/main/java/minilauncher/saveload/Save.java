@@ -42,6 +42,7 @@ public class Save {
             e.printStackTrace();
             return;
         }
+        saveSettings();
     }
     public static void saveInstallables() {saveInstallables(false);}
     public static void saveInstallables(boolean defaultFile) {
@@ -70,13 +71,21 @@ public class Save {
             }
             settings.put("AutoCheckUpdate", updatersOp);
         }
-        try {
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(App.dataDir+"/settings.json"));
-            bufferedWriter.write(settings.toString(4));
-            bufferedWriter.close();
+        JSONArray packsCfg = new JSONArray();
+        for (Packages.installPackage pack : Packages.packages) {
+            JSONObject cfg = new JSONObject();
+            cfg.put("console", pack.launchingDetails.isConsole);
+            cfg.put("debug", pack.launchingDetails.isDebug);
+            cfg.put("fabric", pack.launchingDetails.withFabric);
+            packsCfg.put(cfg);
+        }
+        settings.put("LaunchingConfigs", packsCfg);
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(App.dataDir+"/settings.json"))) {
+			bufferedWriter.write(settings.toString(4));
             Log.debug("Saved settings.json.");
         } catch (IOException e) {
             e.printStackTrace();
+            Log.debug("Failed to save settings.json.");
         }
     }
 }

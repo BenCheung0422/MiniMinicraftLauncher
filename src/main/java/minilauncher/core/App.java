@@ -19,6 +19,7 @@ import minilauncher.handler.Packages;
 import minilauncher.layout.Layout;
 import minilauncher.layout.mainLayout.Loading;
 import minilauncher.layout.mainLayout.MainPage;
+import minilauncher.saveload.Version;
 
 public class App {
     public static boolean isDebug = false;
@@ -30,9 +31,13 @@ public class App {
 	static String systemAppDir;
     private static Layout MainAppLayout;
 
+    public static Version VERSION = new Version("1.0.0");
+
     public static void exit() {
         running = false;
-        Launcher.removeAllLaunching();
+        try {
+            Launcher.removeAllLaunching();
+        } catch (NoClassDefFoundError e) {}
     }
     public static void main(String[] args) {
         resolveArgs(args);
@@ -93,8 +98,8 @@ public class App {
         FileHandler.makeDirs();
         Packages.init();
         Log.debug("Loading MainPage Screen.");
-        MainPage.loadLayout(mainLayout);
         layout = mainLayout;
+        MainPage.loadLayout(mainLayout);
         Runner.run();
         Log.debug("Application exits.");
         System.exit(0);

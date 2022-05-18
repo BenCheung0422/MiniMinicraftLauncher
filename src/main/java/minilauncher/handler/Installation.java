@@ -83,6 +83,9 @@ public class Installation {
         }
         new File(gameDir+"/data/").mkdirs();
         Packages.addPackage(gameName, gameVersion, gameDir+"/game.jar", gameDir+"/data/");
+        Log.debug("Installation added.");
+        StatusBar.setStatus("New installation added");
+        StatusBar.visible(3000);
     }
 
     public static void removeInstall(int packageIndex, boolean keepData) {
@@ -94,6 +97,9 @@ public class Installation {
             e.printStackTrace();
         }
         Packages.removePackage(packageIndex);
+        Log.debug("Installation removed.");
+        StatusBar.setStatus("Installation removed");
+        StatusBar.visible(3000);
     }
 
     public static void deleteDirectoryStream(Path path) throws IOException {
@@ -128,6 +134,9 @@ public class Installation {
             return;
         }
         new File(App.dataDir+"/fabric").mkdirs();
+        Log.debug("Installing Fabric...");
+        StatusBar.setStatus("Installing Fabric...");
+        StatusBar.visible(4000);
         try {
             ZipInputStream zis = new ZipInputStream(new URL("https://raw.githubusercontent.com/BenCheung0422/MiniMinicraftLauncher/main/fabric.zip").openStream());
             // list files in zip
@@ -144,11 +153,16 @@ public class Installation {
             Fabric.installPack.fabricLoaderVer = new Version("1.1.1");
             Fabric.installed = true;
             Log.debug("Fabric installed.");
+            StatusBar.setStatus("Fabric installed.");
+            StatusBar.visible(4000);
             Save.savePackageList();
+            Fabric.updateFabricStatusMenu();
         } catch (IOException e) {
             e.printStackTrace();
             Log.debug("Error on installing Fabric.");
-        }
+            StatusBar.setStatus("Error on installing Fabric.");
+            StatusBar.visible(4000);
+    }
     }
 
     public static void removeFabric() {
@@ -158,6 +172,10 @@ public class Installation {
         Fabric.installPack = null;
         Fabric.installed = false;
         Save.savePackageList();
+        Fabric.updateFabricStatusMenu();
+        Log.debug("Fabric removed.");
+        StatusBar.setStatus("Fabric uninstalled.");
+        StatusBar.visible(3000);
     }
 
     // protect zip slip attack

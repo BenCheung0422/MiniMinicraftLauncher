@@ -25,6 +25,7 @@ public class Load {
         }
         Installation.installations = installations;
         loadInstallables();
+        loadSettings();
     }
     public static void loadInstallables() {
         if (new File(App.dataDir+"/installables.json").exists()) {

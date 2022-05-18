@@ -17,12 +17,15 @@ public class LaunchOptionsDialog extends DialogLayout {
     private JCheckBox isDebug = new JCheckBox("In debug mode");
     private JCheckBox isConsole = new JCheckBox("Show console/terminal");
     private JCheckBox withFabric = new JCheckBox("MiniFabric");
-    public LaunchOptionsDialog(Frame frame, boolean modal) {
+    public LaunchOptionsDialog(Frame frame, boolean modal, boolean def1, boolean def2, boolean def3) {
         super(frame, modal, new Properties());
         setTitle("Launch Option");
         isDebug.setAlignmentX(Component.LEFT_ALIGNMENT);
         isConsole.setAlignmentX(Component.LEFT_ALIGNMENT);
         withFabric.setAlignmentX(Component.LEFT_ALIGNMENT);
+        isDebug.setSelected(def1);
+        isConsole.setSelected(def2);
+        withFabric.setSelected(def3);
         if (!Fabric.installed) withFabric.setEnabled(false);
         JPanel buttonPanel = new JPanel();
         JButton installButton = new JButton("Apply");
