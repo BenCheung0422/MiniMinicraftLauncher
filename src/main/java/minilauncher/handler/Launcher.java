@@ -1,18 +1,12 @@
 package minilauncher.handler;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.reflect.Field;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Vector;
-
-import javax.swing.JButton;
-
 import java.awt.Color;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
 
 import minilauncher.core.App;
 import minilauncher.core.Log;

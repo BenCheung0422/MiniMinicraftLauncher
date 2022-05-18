@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 
 import minilauncher.core.Log;
@@ -13,8 +14,10 @@ public class StatusBar {
     private static JLabel statusBar;
     private static Runnable setVisible;
     private static Runnable setInvisible;
+    
     private static Timer timer = new Timer();
     private static TimerTask curTimerTask = null;
+    
     public static void setStatusBar(JLabel label) {
         statusBar = label;
     }
@@ -28,9 +31,10 @@ public class StatusBar {
 
     public static void initBar() {
         setInvisible.run();
-        statusBar.setBackground(Color.BLACK);
+        statusBar.setBackground(new Color(28, 28, 28));
         statusBar.setForeground(Color.WHITE);
-        statusBar.setFont(new Font(Font.SERIF, Font.BOLD, 20));
+        statusBar.setBorder(BorderFactory.createEmptyBorder());
+        statusBar.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
     }
 
     public static void visible(int ms) {

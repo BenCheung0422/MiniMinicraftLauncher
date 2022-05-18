@@ -1,11 +1,15 @@
 package minilauncher.layout.mainLayout;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,15 +20,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
-import java.awt.Graphics;
-import java.awt.event.ActionListener;
-import java.awt.BorderLayout;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -81,19 +84,27 @@ public class MainPage {
         public static JLabel launchOptions3 = new JLabel();
         public static JPanel savesPanel = new JPanel();
     }
+    
+    public static final Color HeaderColor = new Color(24, 24, 24);
+    public static final Color BigPanelColor = new Color(16, 16, 16);
+    
     public static JMenu autoUpdater = new JMenu("Auto Updater");
     public static JMenuItem checkUpdatesManual = new JMenuItem("Check Updates");
     private static Layout appLayout;
     private static JPanel categoryPanels = new JPanel();
     public static JMenu fabricMenu = new JMenu("Fabric");
-
-    public static void loadLayout(Layout layout) {
-        JLabel label = new JLabel("MiniLauncher");
-        label.setFont(new Font("Serif", Font.BOLD, 40));
-        label.setForeground(Color.WHITE);
-        label.setBackground(new Color(30, 30, 30));
+    
+    public static void loadLayout(Layout layout) throws IOException {
+    	// Put the Minicraft logo as Header
+        JLabel label = new JLabel();
+        BufferedImage titleIcon = ImageIO.read(App.class.getResourceAsStream("/resources/title.png"));
+        label.setIcon(new ImageIcon(titleIcon));
+        
+        label.setFont(new Font("SansSerif", Font.BOLD, 40));
+        label.setForeground(Color.BLACK);
+        label.setBackground(new Color(244, 244, 244));
         label.setBounds(0, 0, layout.getWidth(), 40);
-        label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        //label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setVerticalAlignment(SwingConstants.CENTER);
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -101,17 +112,18 @@ public class MainPage {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(label);
         updatePackCategories();
+        
         JPanel infoTitlePan = new JPanel();
         infoTitlePan.setLayout(new BoxLayout(infoTitlePan, BoxLayout.Y_AXIS));
         JPanel pack = new JPanel();
         pack.setLayout(new BorderLayout());
         packageCurrDetails.name = new JLabel();
-        packageCurrDetails.name.setFont(new Font("Serif", Font.PLAIN, 25));
+        packageCurrDetails.name.setFont(new Font("SansSerif", Font.PLAIN, 25));
         packageCurrDetails.name.setForeground(Color.WHITE);
         packageCurrDetails.name.setAlignmentX(Component.CENTER_ALIGNMENT);
         infoTitlePan.add(packageCurrDetails.name);
         packageCurrDetails.version = new JLabel();
-        packageCurrDetails.version.setFont(new Font("Serif", Font.PLAIN, 18));
+        packageCurrDetails.version.setFont(new Font("SansSerif", Font.PLAIN, 18));
         packageCurrDetails.version.setForeground(Color.WHITE);
         packageCurrDetails.version.setAlignmentX(Component.CENTER_ALIGNMENT);
         packageCurrDetails.launchOptionsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -123,16 +135,16 @@ public class MainPage {
         packageCurrDetails.launchOptions1.setForeground(Color.WHITE);
         packageCurrDetails.launchOptions2.setForeground(Color.WHITE);
         packageCurrDetails.launchOptions3.setForeground(Color.WHITE);
-        packageCurrDetails.launchOptions1.setFont(new Font("Serif", Font.PLAIN, 20));
-        packageCurrDetails.launchOptions2.setFont(new Font("Serif", Font.PLAIN, 20));
-        packageCurrDetails.launchOptions3.setFont(new Font("Serif", Font.PLAIN, 20));
+        packageCurrDetails.launchOptions1.setFont(new Font("SansSerif", Font.PLAIN, 20));
+        packageCurrDetails.launchOptions2.setFont(new Font("SansSerif", Font.PLAIN, 20));
+        packageCurrDetails.launchOptions3.setFont(new Font("SansSerif", Font.PLAIN, 20));
         packageCurrDetails.launchOptionsSPanel.add(packageCurrDetails.launchOptions1);
         packageCurrDetails.launchOptionsSPanel.add(packageCurrDetails.launchOptions2);
         packageCurrDetails.launchOptionsSPanel.add(packageCurrDetails.launchOptions3);
         packageCurrDetails.launchOptionsSPanel.setBackground(new Color(16, 16, 16));
         packageCurrDetails.savesPanel.setBorder(BorderFactory.createEmptyBorder(16, 0, 0, 0));
         packageCurrDetails.savesPanel.setLayout(new BoxLayout(packageCurrDetails.savesPanel, BoxLayout.Y_AXIS));
-        packageCurrDetails.savesPanel.setBackground(new Color(16, 16, 16));
+        packageCurrDetails.savesPanel.setBackground(BigPanelColor);
         packageCurrDetails.savesPanel.setFont(new Font("Serif", Font.PLAIN, 20));
         packageCurrDetails.savesPanel.setForeground(Color.WHITE);
         infoTitlePan.add(packageCurrDetails.version);
@@ -142,29 +154,34 @@ public class MainPage {
         infoPan.add(infoTitlePan);
         JPanel infoEmptySubPan = new JPanel();
         infoEmptySubPan.setSize(0, 60);
-        infoEmptySubPan.setBackground(new Color(16, 16, 16));
+        infoEmptySubPan.setBackground(BigPanelColor);
         infoPan.add(infoEmptySubPan);
         Box infoDetailPan = new Box(BoxLayout.Y_AXIS);
-        infoDetailPan.setBackground(new Color(16, 16, 16));
+        infoDetailPan.setBackground(BigPanelColor);
         infoPan.add(infoDetailPan);
         packageCurrDetails.infoDetailPanel = infoDetailPan;
-        infoPan.setBackground(new Color(16, 16, 16));
+        infoPan.setBackground(BigPanelColor);
+        infoPan.setBorder(BorderFactory.createEmptyBorder());
         packageCurrDetails.infoPanel = infoPan;
+        packageCurrDetails.infoPanel.setBorder(BorderFactory.createEmptyBorder());
         pack.add(infoPan, BorderLayout.PAGE_START);
-        pack.setBackground(new Color(16, 16, 16));
-        infoTitlePan.setBackground(new Color(16, 16, 16));
+        pack.setBackground(BigPanelColor);
+        infoTitlePan.setBackground(BigPanelColor);
+        infoTitlePan.setBorder(BorderFactory.createEmptyBorder());
         categoryPanels.setLayout(new BoxLayout(categoryPanels, BoxLayout.Y_AXIS));
-        categoryPanels.setBackground(new Color(25, 25, 25));
+        categoryPanels.setBackground(BigPanelColor);
         packageCurrDetails.detailsPanel = pack;
         JScrollPane lsubPan = new JScrollPane(categoryPanels, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         JScrollPane rsubPan = new JScrollPane(pack, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        lsubPan.setBackground(new Color(25, 25, 25));
-        rsubPan.setBackground(new Color(16, 16, 16));
+        lsubPan.setBackground(HeaderColor);
+        lsubPan.setBorder(BorderFactory.createEmptyBorder());
+        rsubPan.setBackground(HeaderColor);
+        rsubPan.setBorder(BorderFactory.createEmptyBorder());
         JSplitPane subPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, lsubPan, rsubPan);
         subPanel.setDividerLocation(300);
         subPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         subPanel.setEnabled(false);
-        subPanel.setBackground(new Color(20, 20, 20));
+        subPanel.setBackground(BigPanelColor);
         subPanel.setDividerSize(3);
         subPanel.setUI(new BasicSplitPaneUI() 
         {
@@ -185,14 +202,18 @@ public class MainPage {
                 };
             }
         });
+        
         subPanel.setBorder(null);
-        subPanel.setForeground(new Color(20, 20, 20));
+        subPanel.setForeground(HeaderColor);
+        subPanel.setBorder(BorderFactory.createEmptyBorder());
         panel.add(subPanel);
-        panel.setBackground(new Color(15, 15, 15));
+        panel.setBackground(HeaderColor);
+        panel.setBorder(BorderFactory.createEmptyBorder());
         Loading.removeLayout();
         Log.debug("Removed Loading Screen");
         layout.getContentPane().add(panel);
         JLabel statusLabel = new JLabel();
+        statusLabel.setBorder(BorderFactory.createEmptyBorder());
         StatusBar.setStatusBar(statusLabel);
         StatusBar.setVisibleFunction(() -> {
             layout.getContentPane().add(statusLabel, BorderLayout.SOUTH);
@@ -205,7 +226,9 @@ public class MainPage {
         StatusBar.initBar();
         layout.getContentPane().setBackground(new Color(10, 10, 10));
         JMenuBar menuBar = layout.getJMenuBar();
+        menuBar.setBorder(BorderFactory.createEmptyBorder());
         JMenu optionsMenu = menuBar.getMenu(0);
+        optionsMenu.setBorder(BorderFactory.createEmptyBorder());
         JMenuItem updateOptionsMenu = new JMenuItem("Auto Check Updater Options");
         updateOptionsMenu.addActionListener(e -> {
             new AutoCheckOptionDialog(layout, true).showDialog();
@@ -264,6 +287,7 @@ public class MainPage {
         Log.debug("Loaded MainPage Screen.");
         if (Settings.autoUpdateOnStart) AutoCheckUpdate.checkUpdates();
     }
+    
     private static void setCurrPackageDetail(int index) {
         Packages.installPackage pack = Packages.packages.get(index);
         packageCurrDetails.name.setText(pack.name);
@@ -455,20 +479,20 @@ public class MainPage {
             });
             listCom.setBackground(new Color(16, 16, 16));
             listCom.setForeground(new Color(200, 200, 200));
-            listCom.setFont(new Font("Serif", Font.PLAIN, 18));    
+            listCom.setFont(new Font("SansSerif", Font.PLAIN, 18));    
             listCom.label.setBackground(new Color(16, 16, 16));
             listCom.label.setForeground(new Color(200, 200, 200));
-            listCom.label.setFont(new Font("Serif", Font.PLAIN, 18));
+            listCom.label.setFont(new Font("SansSerif", Font.PLAIN, 18));
             l.setBackground(new Color(16, 16, 16));
             l.setForeground(new Color(200, 200, 200));
-            l.setFont(new Font("Serif", Font.PLAIN, 18));    
+            l.setFont(new Font("SansSerif", Font.PLAIN, 18));    
             l.setFixedCellWidth(280);
             lists.add(listCom);
             categoryPanels.add(listCom);
         }
         categoryPanels.setBackground(new Color(16, 16, 16));
         categoryPanels.setForeground(new Color(200, 200, 200));
-        categoryPanels.setFont(new Font("Serif", Font.PLAIN, 18));
+        categoryPanels.setFont(new Font("SansSerif", Font.PLAIN, 18));
         categoryPanels.repaint();
     }
 }

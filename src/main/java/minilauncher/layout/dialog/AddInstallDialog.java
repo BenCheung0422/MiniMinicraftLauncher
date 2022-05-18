@@ -1,7 +1,7 @@
 package minilauncher.layout.dialog;
 
-import java.awt.Frame;
 import java.awt.BorderLayout;
+import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
