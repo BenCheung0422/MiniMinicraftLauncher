@@ -1,5 +1,10 @@
 package minilauncher.layout.dialog;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Frame;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 
 import javax.swing.BoxLayout;
@@ -14,12 +19,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.io.FilenameUtils;
-
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.Frame;
-import java.awt.BorderLayout;
-import java.awt.Component;
 
 import minilauncher.core.App;
 import minilauncher.layout.componentlayout.FileChoosingCom;

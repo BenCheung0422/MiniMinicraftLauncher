@@ -1,10 +1,13 @@
 package minilauncher.handler;
 
-import java.awt.*;
-import java.io.*;
-import java.util.*;
+import java.awt.EventQueue;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import javax.swing.*;
+
+import javax.swing.JTextArea;
 
 /**
  * Provided from https://stackoverflow.com/questions/342990/create-java-console-inside-a-gui-panel/343007#343007

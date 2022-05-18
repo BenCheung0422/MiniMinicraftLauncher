@@ -1,9 +1,9 @@
 package minilauncher.layout.dialog;
 
-import javax.swing.JDialog;
-
 import java.awt.Frame;
 import java.awt.Window;
+
+import javax.swing.JDialog;
 
 public class DialogLayout extends JDialog {
     public DialogLayout(Properties properties) {

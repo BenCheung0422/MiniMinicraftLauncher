@@ -1,11 +1,11 @@
 package minilauncher.handler;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.awt.Desktop;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.JMenuItem;
 
