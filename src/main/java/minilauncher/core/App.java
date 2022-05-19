@@ -32,7 +32,7 @@ public class App {
 	static String systemAppDir;
 	private static Layout MainAppLayout;
 
-	public static Version VERSION = new Version("1.0.0");
+	public static Version VERSION = new Version("1.0.1");
 
 	public static void exit() {
 		running = false;

@@ -229,6 +229,7 @@ public class MainPage {
         menuBar.setBorder(BorderFactory.createEmptyBorder());
         JMenu optionsMenu = menuBar.getMenu(0);
         optionsMenu.setBorder(BorderFactory.createEmptyBorder());
+        optionsMenu.setForeground(new Color(200, 200, 200));
         JMenuItem updateOptionsMenu = new JMenuItem("Auto Check Updater Options");
         updateOptionsMenu.addActionListener(e -> {
             new AutoCheckOptionDialog(layout, true).showDialog();
@@ -247,6 +248,7 @@ public class MainPage {
             AutoCheckUpdate.checkUpdates();
         });
         autoUpdater.add(checkUpdatesManual);
+        autoUpdater.setForeground(new Color(200, 200, 200));
         menuBar.add(autoUpdater);
         JMenuItem installFabric = new JMenuItem("Install MiniFabric");
         installFabric.addActionListener(e -> Installation.installFabric());
@@ -278,6 +280,7 @@ public class MainPage {
         installMenu.add(addInstallMenu);
         installMenu.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         installMenu.setMnemonic(KeyEvent.VK_I);
+        installMenu.setForeground(new Color(200, 200, 200));
         menuBar.add(Box.createHorizontalGlue());
         menuBar.add(installMenu);
         layout.validate();

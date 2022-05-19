@@ -5,7 +5,7 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
-project.version = '1.0.0'
+project.version = '1.0.1'
 archivesBaseName = "MiniLauncher"
 
 sourceCompatibility = 8
